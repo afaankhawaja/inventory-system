@@ -47,7 +47,8 @@ model User {
   last_name            String?              
   is_active            Boolean?               
   age                  Int?                   
-  cnic                 String?               
+  cnic                 String?
+  image_path           String?               
   roleId               String?                @map("roleID") 
   created_at           DateTime               @default(now()) 
   updated_at           DateTime               @updatedAt
@@ -222,7 +223,8 @@ model Item {
   quantity_in_stock       Int?                  
   reorder_threshold      Int?                  
   is_high_value           Boolean?              
-  brand                 String?               
+  brand                 String?    
+  image_path            String?           
   barcode               String?               @unique 
   locationId            String?               @map("locationID") 
   categoryId            String?               @map("categoryID")
@@ -291,7 +293,8 @@ model Vendor {
   is_active    Boolean? 
   rating      Decimal?  @db.Decimal 
   age         Int?      
-  cnic        String?   
+  cnic        String?  
+  image_path    String? 
   locationId  String?   @map("locationID")
   created_at   DateTime  @default(now()) 
   updated_at   DateTime  @updatedAt
