@@ -1,0 +1,495 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Audit_Log Model (from audit_logs table)
+
+model AuditLog {
+  auditID       String    @id @default(uuid()) @map("auditID")
+  table_name    String?   
+  entity_id     String?  
+  action_type   String?   
+  old_value     Json?    
+  new_value     Json?    
+  is_successful Boolean? 
+  userId       String?   @map("userID")
+  timestamp    DateTime? 
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt 
+
+  // Relationship to User model
+  user User? @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("Audit_Log")
+}
+
+// 2. User Model (from users table)
+// Maps to the public."User" table in the database.
+model User {
+  userId               String                 @id @default(uuid()) @map("userID")
+  username             String?            
+  password_hash        String?               
+  phone                String?      
+  email                String?      
+  first_name           String?                
+  last_name            String?              
+  is_active            Boolean?               
+  age                  Int?                   
+  cnic                 String?               
+  roleId               String?                @map("roleID") 
+  created_at           DateTime               @default(now()) 
+  updated_at           DateTime               @updatedAt
+
+  // Relationships
+  role                 Role?                  @relation(fields: [roleId], references: [roleId], onDelete: SetNull, onUpdate: Cascade)
+  auditLogs            AuditLog[]             
+  alerts               Alert[]                
+  receipts             Receipt[]              
+  maintenanceSchedules MaintenanceSchedule[]  
+  favorites            Favorite[]             
+  templates            Template[]             
+  transactions         Transaction[]          
+  syncLogs             SyncLog[]              
+  userDomains          UserDomain[]           
+
+  @@map("User") 
+}
+
+// 3. Role Model (from Role table)
+
+model Role {
+  roleId       String   @id @default(uuid()) @map("roleID")
+  name         String?  
+  description  String?  
+  created_at   DateTime @default(now()) 
+  updated_at   DateTime @updatedAt 
+
+  // Relationships
+  users       User[]                   
+  rolePermissions RolePermissions[]   
+
+  @@map("Role")
+}
+
+// 4. Permissions Model (from Permissions table)
+
+model Permissions {
+  permissionId String   @id @default(uuid()) @map("permissionID")
+  permission_name String? 
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt 
+  // Relationships
+  rolePermissions RolePermissions[] 
+
+  @@map("Permissions")
+}
+
+// 5. RolePermissions Join Model (from Role_Permissions table)
+
+model RolePermissions {
+  permissionId String @map("permissionID")
+  roleId       String @map("roleID")
+
+  // Relationships
+  permission Permissions @relation(fields: [permissionId], references: [permissionId], onDelete: Cascade, onUpdate: Cascade)
+  role       Role        @relation(fields: [roleId], references: [roleId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([permissionId, roleId]) 
+  @@map("Role_Permissions")
+}
+
+// 6. Domain Model (from Domain table)
+
+model Domain {
+  domainId         String    @id @default(uuid()) @map("domainID") 
+  name             String?   
+  description      String?   
+  parent_domain_id String?   
+  created_at       DateTime  @default(now()) 
+  updated_at       DateTime  @updatedAt
+
+  // Self-referencing relationships
+  parentDomain   Domain?   @relation("SubDomains", fields: [parent_domain_id], references: [domainId], onDelete: SetNull, onUpdate: Cascade)
+  subDomains     Domain[]  @relation("SubDomains")
+
+  // Other relationships
+  userDomains    UserDomain[]
+  locations      Location[]  
+
+  @@map("Domain")
+}
+
+// 7. UserDomain Join Model (from User_Domain table)
+
+model UserDomain {
+  userId    String @map("userID") 
+  domainId  String @map("domainID") 
+
+  // Relationships
+  user      User   @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade) 
+  domain    Domain @relation(fields: [domainId], references: [domainId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([userId, domainId]) 
+  @@map("User_Domain")
+}
+
+// 8. Location Model (from Location table)
+
+model Location {
+  locationId         String     @id @default(uuid()) @map("locationID")
+  location_name      String?    
+  location_address   String?    
+  domainId           String?    @map("domainID")
+  parent_location_id String?    
+  created_at          DateTime   @default(now()) 
+  updated_at          DateTime   @updatedAt 
+
+  // Relationships
+  domain           Domain?    @relation(fields: [domainId], references: [domainId], onDelete: SetNull, onUpdate: Cascade)
+  parentLocation   Location?  @relation("SubLocations", fields: [parent_location_id], references: [locationId], onDelete: SetNull, onUpdate: Cascade)
+  subLocations     Location[] @relation("SubLocations") 
+  items            Item[]    
+  vendors          Vendor[]   
+  transactionsTo   Transaction[] @relation("TransactionToLocation") 
+  transactionsFrom Transaction[] @relation("TransactionFromLocation")
+
+  @@map("Location")
+}
+
+// 9. Category Model (from Category table)
+
+model Category {
+  categoryId    String    @id @default(uuid()) @map("categoryID")
+  name          String?   
+  created_date   DateTime? @default(now()) 
+  description   String?   
+  parent_category String?  
+  created_at     DateTime  @default(now()) 
+  updated_at     DateTime  @updatedAt
+
+  // Self-referencing relationships
+  parent        Category? @relation("SubCategories", fields: [parent_category], references: [categoryId], onDelete: SetNull, onUpdate: Cascade)
+  subCategories Category[] @relation("SubCategories")
+
+  // Other relationships
+  items         Item[]    
+
+  @@map("Category")
+}
+
+// 10. MaintenanceSchedule Model (from Maintenance_Schedule table)
+
+model MaintenanceSchedule {
+  maintenance_schedule_ID String    @id @default(uuid()) @map("maintenance_schedule_ID") 
+  maintenance_type       String?   
+  status                String?   
+  notes                 String?   
+  createdAt             DateTime 
+  updatedAt             DateTime  @updatedAt
+  itemId                String?   @map("itemID") 
+  userId                String?   @map("userID")
+
+
+  // Relationships
+  item                  Item?     @relation(fields: [itemId], references: [itemId], onDelete: SetNull, onUpdate: Cascade)
+  user                  User?     @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("Maintenance_Schedule") 
+}
+
+
+// 11. Item Model (from Item table)
+
+model Item {
+  itemId                String                @id @default(uuid()) @map("itemID") 
+  name                  String?               
+  manufacturing_date     DateTime?             
+  expiry_date            DateTime?            
+  price                 Decimal?              @db.Decimal 
+  condition             String?               
+  quantity_in_stock       Int?                  
+  reorder_threshold      Int?                  
+  is_high_value           Boolean?              
+  brand                 String?               
+  barcode               String?               @unique 
+  locationId            String?               @map("locationID") 
+  categoryId            String?               @map("categoryID")
+  created_at             DateTime              @default(now())
+  updated_at             DateTime              @updatedAt
+
+  // Relationships
+  location              Location?             @relation(fields: [locationId], references: [locationId], onDelete: SetNull, onUpdate: Cascade) 
+  category              Category?             @relation(fields: [categoryId], references: [categoryId], onDelete: SetNull, onUpdate: Cascade) 
+
+  maintenanceSchedules  MaintenanceSchedule[] 
+
+  itemAlerts            ItemAlert[]          
+  receiptItems          ReceiptItem[]       
+  purchaseHistories     PurchaseHistory[]    
+  favoriteItems         FavoriteItem[]       
+  templateItems         TemplateItem[]       
+  transactionItems      TransactionItem[]    
+
+  @@map("Item")
+}
+
+// 12. Alert Model (from Alert table)
+
+model Alert {
+  alertId    String    @id @default(uuid()) @map("alertID")
+  alert_type  String?   
+  message    String?   
+  severity   String?   
+  alert_date  DateTime? 
+  is_active   Boolean?  
+  userId     String?   @map("userID") 
+  created_at  DateTime  @default(now()) 
+  updated_at DateTime  @updatedAt 
+
+  // Relationships
+  user       User?     @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade) 
+  itemAlerts ItemAlert[] 
+
+  @@map("Alert")
+}
+
+// 13. ItemAlert Join Model (from Item_Alert table)
+
+model ItemAlert {
+  alertId   String   @map("alertID") 
+  itemId    String   @map("itemID")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relationships
+  alert     Alert    @relation(fields: [alertId], references: [alertId], onDelete: Cascade, onUpdate: Cascade) 
+  item      Item     @relation(fields: [itemId], references: [itemId], onDelete: Cascade, onUpdate: Cascade) 
+
+  @@id([alertId, itemId]) 
+  @@map("Item_Alert")
+}
+
+// 14. Vendor Model (from Vendor table)
+
+model Vendor {
+  vendorId    String    @id @default(uuid()) @map("vendorID")
+  name        String? 
+  phone       String?   
+  address     String?   
+  is_active    Boolean? 
+  rating      Decimal?  @db.Decimal 
+  age         Int?      
+  cnic        String?   
+  locationId  String?   @map("locationID")
+  created_at   DateTime  @default(now()) 
+  updated_at   DateTime  @updatedAt
+
+  // Relationships
+  location    Location? @relation(fields: [locationId], references: [locationId], onDelete: SetNull, onUpdate: Cascade) 
+  receipts    Receipt[] 
+  purchaseHistories PurchaseHistory[]
+
+  @@map("Vendor")
+}
+
+// 15. Receipt Model (from Receipt table)
+
+
+model Receipt {
+  receiptId    String    @id @default(uuid()) @map("receiptID") 
+  receipt_number Int      @map("receipt_number")
+  total_amount  Decimal   @db.Decimal 
+  purchase_date DateTime  
+  image_path    String?   
+  ocr_text      String?   
+  status       String?  
+  uploaded_date DateTime? 
+  vendorId     String?    @map("vendorID") 
+  userId       String?    @map("userID") 
+  created_at    DateTime  @default(now()) 
+  updated_at    DateTime  @updatedAt 
+
+  // Relationships
+  vendor       Vendor?     @relation(fields: [vendorId], references: [vendorId], onDelete: SetNull, onUpdate: Cascade) 
+  user         User?       @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade) 
+  receiptItems ReceiptItem[]
+
+  @@map("Receipt")
+}
+
+// 16. ReceiptItem Model (from Receipt_Item table)
+
+model ReceiptItem {
+  receipt_item_ID String    @id @default(uuid()) @map("receipt_item_ID") 
+  price         Decimal?  @db.Decimal 
+  quantity      Int?      
+  receiptId     String?   @map("receiptID")
+  itemId        String?   @map("itemID") 
+  created_at     DateTime  @default(now()) 
+  updated_at     DateTime  @updatedAt
+
+  // Relationships
+  receipt       Receipt?  @relation(fields: [receiptId], references: [receiptId], onDelete: SetNull, onUpdate: Cascade) 
+  item          Item?     @relation(fields: [itemId], references: [itemId], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("Receipt_Item")
+}
+
+// 17. PurchaseHistory Model (from Purchase_History table)
+
+model PurchaseHistory {
+  purchaseId    String    @id @default(uuid()) @map("purchaseID") 
+  purchase_date  DateTime? 
+  quantity      Int?       
+  unit_price    Decimal?  @db.Decimal 
+  total_cost    Decimal?  @db.Decimal 
+  itemId        String?   @map("itemID") 
+  vendorId      String?   @map("vendorID")
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt 
+
+  // Relationships
+  item        Item?     @relation(fields: [itemId], references: [itemId], onDelete: SetNull, onUpdate: Cascade) 
+  vendor      Vendor?   @relation(fields: [vendorId], references: [vendorId], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("Purchase_History")
+}
+
+// 18. Favorites Model (from Favorites table)
+
+model Favorite {
+  favoriteId   String    @id @default(uuid()) @map("favoriteID")
+  name         String?    
+  description  String?   
+  userId       String?   @map("userID") 
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  // Relationships
+  user        User?       @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade) 
+  favoriteItems FavoriteItem[] 
+
+  @@map("Favorites")
+}
+
+// 19. FavoriteItem Model (from Favorite_Item table)
+
+model FavoriteItem {
+  favorite_item_ID String    @id @default(uuid()) @map("favorite_item_ID")
+  favoriteId     String?   @map("favoriteID")
+  itemId         String?   @map("itemID") 
+  created_at      DateTime  @default(now()) 
+  updated_at      DateTime  @updatedAt
+
+  // Relationships
+  favorite       Favorite? @relation(fields: [favoriteId], references: [favoriteId], onDelete: SetNull, onUpdate: Cascade) // fk_FavoriteItem_favoriteID
+  item           Item?     @relation(fields: [itemId], references: [itemId], onDelete: SetNull, onUpdate: Cascade) // fk_FavoriteItem_itemID
+
+  @@map("Favorite_Item")
+}
+
+// 20. Template Model (from Template table)
+
+model Template {
+  templateId   String    @id @default(uuid()) @map("templateID")
+  name         String?   
+  type         String?   
+  description  String?   
+  created_date  DateTime? 
+  userId       String?   @map("userID") 
+  created_at    DateTime  @default(now()) 
+  updated_at    DateTime  @updatedAt 
+
+  // Relationships
+  user         User?         @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade)
+  templateItems TemplateItem[] 
+
+  @@map("Template")
+}
+
+// 21. TemplateItem Model (from Template_Item table)
+
+model TemplateItem {
+  template_item_ID String    @id @default(uuid()) @map("template_item_ID")
+  notes          String?   
+  defaultQuantity Int?     
+  default_name    String?   
+  itemId         String?   @map("itemID")
+  templateId     String?   @map("templateID") 
+  created_at      DateTime  @default(now()) 
+  updated_at      DateTime  @updatedAt 
+  // Relationships
+  item           Item?     @relation(fields: [itemId], references: [itemId], onDelete: SetNull, onUpdate: Cascade)
+  template       Template? @relation(fields: [templateId], references: [templateId], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("Template_Item")
+}
+
+// 22. Transaction Model (from Transaction table)
+
+model Transaction {
+  transactionId     String    @id @default(uuid()) @map("transactionID") 
+  transaction_type  String?  
+  quantity          Int?      
+  unit_price        Decimal?  @db.Decimal 
+  status            String?   
+  transaction_date  DateTime? 
+  to_location       String?   
+  from_location     String?   
+  userId            String?   @map("userID")
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+
+  // Relationships
+  toLocationRef Location? @relation("TransactionToLocation", fields: [to_location], references: [locationId], onDelete: SetNull, onUpdate: Cascade)
+  fromLocationRef Location? @relation("TransactionFromLocation", fields: [from_location], references: [locationId], onDelete: SetNull, onUpdate: Cascade) 
+  user          User?     @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade) 
+  transactionItems TransactionItem[]
+
+  @@map("Transaction")
+}
+
+// 23. TransactionItem Join Model (from Transaction_Item table)
+
+model TransactionItem {
+  transactionId String @map("transactionID") 
+  itemId        String @map("itemID") 
+
+  // Relationships
+  transaction   Transaction @relation(fields: [transactionId], references: [transactionId], onDelete: Cascade, onUpdate: Cascade) 
+  item          Item        @relation(fields: [itemId], references: [itemId], onDelete: Cascade, onUpdate: Cascade) 
+
+  @@id([transactionId, itemId])
+  @@map("Transaction_Item") 
+}
+
+// 24. SyncLog Model (from Sync_Log table)
+
+model SyncLog {
+  syncId         String    @id @default(uuid()) @map("syncID") 
+  device_id      String?   
+  data_payload   Json?     
+  status         String?   
+  sync_timestamp DateTime? 
+  userId         String?   @map("userID")
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt 
+
+  // Relationships
+  user         User?     @relation(fields: [userId], references: [userId], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("Sync_Log")
+
+}
