@@ -2,17 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { UserCreateInput } from './../@generated/user/user-create.input';
 import { UserUpdateInput } from './../@generated/user/user-update.input';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { encrypt } from 'src/helpers/crypto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createUserInput: UserCreateInput) {
+    let encryptedPassword;
+    if (createUserInput?.password_hash) {
+      encryptedPassword = encrypt(createUserInput?.password_hash);
+    }
+
     return this.prisma.user.create({
       data: {
         userId: createUserInput.userId,
         username: createUserInput.username,
-        password_hash: createUserInput.password_hash,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        password_hash: encryptedPassword,
         phone: createUserInput.phone,
         email: createUserInput.email,
         first_name: createUserInput.first_name,
@@ -48,6 +55,11 @@ export class UsersService {
   }
 
   update(userID: string, updateUserInput: UserUpdateInput) {
+    let encryptedPassword: string | undefined;
+    const pwd_field = updateUserInput.password_hash;
+    if (pwd_field?.set) {
+      encryptedPassword = encrypt(pwd_field?.set);
+    }
     return this.prisma.user.update({
       where: {
         userId: userID,
@@ -63,6 +75,8 @@ export class UsersService {
         age: updateUserInput.age,
         cnic: updateUserInput.cnic,
         image_path: updateUserInput.image_path,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        password_hash: encryptedPassword,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         role: updateUserInput.role
           ? {
