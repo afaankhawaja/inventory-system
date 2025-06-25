@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
+
   create(createUserInput: UserCreateInput) {
     return this.prisma.user.create({
       data: {
@@ -20,7 +21,18 @@ export class UsersService {
         age: createUserInput.age,
         cnic: createUserInput.cnic,
         image_path: createUserInput.image_path,
+        role: createUserInput.role
+          ? {
+              ...(createUserInput.role.create && {
+                create: createUserInput.role.create,
+              }),
+              ...(createUserInput.role.connect && {
+                connect: createUserInput.role.connect,
+              }),
+            }
+          : undefined,
       },
+      include: { role: true },
     });
   }
 
@@ -31,6 +43,7 @@ export class UsersService {
   findOne(userID: string) {
     return this.prisma.user.findUnique({
       where: { userId: userID },
+      include: { role: true },
     });
   }
 
@@ -39,6 +52,7 @@ export class UsersService {
       where: {
         userId: userID,
       },
+      include: { role: true },
       data: {
         username: updateUserInput.username,
         email: updateUserInput.email,
@@ -49,6 +63,21 @@ export class UsersService {
         age: updateUserInput.age,
         cnic: updateUserInput.cnic,
         image_path: updateUserInput.image_path,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        role: updateUserInput.role
+          ? {
+              ...(updateUserInput.role.connect && {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                connect: updateUserInput.role.connect,
+              }),
+              ...(updateUserInput.role.disconnect && {
+                disconnect: updateUserInput.role.disconnect,
+              }),
+              ...(updateUserInput.role.update && {
+                update: updateUserInput.role.update,
+              }),
+            }
+          : undefined,
       },
     });
   }
