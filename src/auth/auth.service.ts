@@ -18,29 +18,19 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const parts = user?.password_hash?.split(':');
-
-    if (Array.isArray(parts) && parts.length === 3) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const iv = parts[0];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const salt = parts[1];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const data = parts[2];
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const decryptedPassword = decrypt({ iv, salt, data });
+    if (user?.password_hash) {
+      const decryptedPassword = decrypt(user?.password_hash);
 
       if (pass !== decryptedPassword) {
         throw new UnauthorizedException();
       }
-      const payload = { sub: user?.username };
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    } else {
-      throw new UnauthorizedException('Invalid credentials');
     }
+    const payload = {
+      sub: user.userId,
+      username: user.username,
+    };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }

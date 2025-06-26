@@ -24,13 +24,19 @@ export function encrypt(plain: string) {
   ].join(':');
 }
 
-export function decrypt(enc: { iv: string; salt: string; data: string }) {
-  const _salt = Buffer.from(enc.salt, 'hex');
-  const _iv = Buffer.from(enc.iv, 'hex');
+export function decrypt(encrypted: string): string {
+  const parts = encrypted.split(':');
+
+  const iv = parts[0];
+  const salt = parts[1];
+  const data = parts[2];
+
+  const _salt = Buffer.from(salt, 'hex');
+  const _iv = Buffer.from(iv, 'hex');
   const _key = scryptSync(secret, _salt, 32);
   const decipher = createDecipheriv(algorithm, _key, _iv);
   const decrypted = Buffer.concat([
-    decipher.update(Buffer.from(enc.data, 'hex')),
+    decipher.update(Buffer.from(data, 'hex')),
     decipher.final(),
   ]);
   return decrypted.toString('utf8');
