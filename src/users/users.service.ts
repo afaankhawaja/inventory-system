@@ -53,6 +53,12 @@ export class UsersService {
       include: { role: true },
     });
   }
+  findOneByUserName(username: string) {
+    return this.prisma.user.findUnique({
+      where: { username: username },
+      include: { role: true },
+    });
+  }
 
   update(userID: string, updateUserInput: UserUpdateInput) {
     let encryptedPassword: string | undefined;

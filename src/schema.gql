@@ -433,13 +433,14 @@ type User {
 type Query {
   hello: String!
   users: [User!]!
-  user(userID: String!): User!
+  user(username: String!): User!
 }
 
 type Mutation {
   createUser(createUserInput: UserCreateInput!): User!
   updateUser(userID: String!, updateUserInput: UserUpdateInput!): User!
   removeUser(userID: String!): User!
+  signin(username: String!, password: String!): String!
 }
 
 input UserCreateInput {
@@ -2755,10 +2756,10 @@ input UserCreateOrConnectWithoutTransactionsInput {
 
 input UserWhereUniqueInput {
   userId: String
+  username: String
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
-  username: StringNullableFilter
   password_hash: StringNullableFilter
   phone: StringNullableFilter
   email: StringNullableFilter

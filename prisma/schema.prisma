@@ -45,7 +45,7 @@ model AuditLog {
 // Maps to the public."User" table in the database.
 model User {
   userId               String                 @id @default(uuid()) @map("userID")
-  username             String?            
+  username             String?                @unique
   password_hash        String?               
   phone                String?      
   email                String?      

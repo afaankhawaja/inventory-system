@@ -8,6 +8,7 @@ import { join } from 'path';
 import { AppResolver } from './app.resolver';
 import { UsersModule } from './users/users.module';
 import { PrismaService } from './prisma/prisma.service';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -17,6 +18,7 @@ import { PrismaService } from './prisma/prisma.service';
     }),
     PrismaModule,
     UsersModule,
+    AuthModule,
   ],
   providers: [AppService, AppResolver, PrismaService],
 })

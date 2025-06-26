@@ -22,6 +22,12 @@ export class UsersResolver {
   findOne(@Args('userID', { type: () => String }) userID: string) {
     return this.usersService.findOne(userID);
   }
+  @Query(() => User, { name: 'user' })
+  findOneByUserName(
+    @Args('username', { type: () => String }) username: string,
+  ) {
+    return this.usersService.findOneByUserName(username);
+  }
 
   @Mutation(() => User)
   updateUser(
