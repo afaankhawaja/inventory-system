@@ -440,6 +440,8 @@ type Query {
   hello: String!
   users: [User!]!
   user(username: String!): User!
+  items: [Item!]!
+  findOne(itemID: String!): Item!
 }
 
 type Mutation {
@@ -448,6 +450,9 @@ type Mutation {
   removeUser(userID: String!): User!
   signin(username: String!, password: String!): AuthTokens!
   refreshToken(refresh_token: String!): AuthTokens!
+  createItem(itemCreateInput: ItemCreateInput!): Item!
+  updateItem(itemUpdateInput: ItemUpdateInput!, itemID: String!): Item!
+  removeItem(itemID: String!): Item!
 }
 
 input UserCreateInput {
@@ -7192,4 +7197,56 @@ input AlertUpdateManyMutationInput {
   is_active: NullableBoolFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+}
+
+input ItemCreateInput {
+  itemId: String
+  name: String
+  manufacturing_date: DateTime
+  expiry_date: DateTime
+  price: Decimal
+  condition: String
+  quantity_in_stock: Int
+  reorder_threshold: Int
+  is_high_value: Boolean
+  brand: String
+  image_path: String
+  barcode: String
+  created_at: DateTime
+  updated_at: DateTime
+  location: LocationCreateNestedOneWithoutItemsInput
+  category: CategoryCreateNestedOneWithoutItemsInput
+  maintenanceSchedules: MaintenanceScheduleCreateNestedManyWithoutItemInput
+  itemAlerts: ItemAlertCreateNestedManyWithoutItemInput
+  receiptItems: ReceiptItemCreateNestedManyWithoutItemInput
+  purchaseHistories: PurchaseHistoryCreateNestedManyWithoutItemInput
+  favoriteItems: FavoriteItemCreateNestedManyWithoutItemInput
+  templateItems: TemplateItemCreateNestedManyWithoutItemInput
+  transactionItems: TransactionItemCreateNestedManyWithoutItemInput
+}
+
+input ItemUpdateInput {
+  itemId: StringFieldUpdateOperationsInput
+  name: NullableStringFieldUpdateOperationsInput
+  manufacturing_date: NullableDateTimeFieldUpdateOperationsInput
+  expiry_date: NullableDateTimeFieldUpdateOperationsInput
+  price: NullableDecimalFieldUpdateOperationsInput
+  condition: NullableStringFieldUpdateOperationsInput
+  quantity_in_stock: NullableIntFieldUpdateOperationsInput
+  reorder_threshold: NullableIntFieldUpdateOperationsInput
+  is_high_value: NullableBoolFieldUpdateOperationsInput
+  brand: NullableStringFieldUpdateOperationsInput
+  image_path: NullableStringFieldUpdateOperationsInput
+  barcode: NullableStringFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
+  updated_at: DateTimeFieldUpdateOperationsInput
+  location: LocationUpdateOneWithoutItemsNestedInput
+  category: CategoryUpdateOneWithoutItemsNestedInput
+  maintenanceSchedules: MaintenanceScheduleUpdateManyWithoutItemNestedInput
+  itemAlerts: ItemAlertUpdateManyWithoutItemNestedInput
+  receiptItems: ReceiptItemUpdateManyWithoutItemNestedInput
+  purchaseHistories: PurchaseHistoryUpdateManyWithoutItemNestedInput
+  favoriteItems: FavoriteItemUpdateManyWithoutItemNestedInput
+  templateItems: TemplateItemUpdateManyWithoutItemNestedInput
+  transactionItems: TransactionItemUpdateManyWithoutItemNestedInput
 }
