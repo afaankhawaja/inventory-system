@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ItemCreateInput } from 'src/@generated/item/item-create.input';
 import { ItemUpdateInput } from 'src/@generated/item/item-update.input';
+import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class ItemsService {
   constructor(private readonly prisma: PrismaService) {}
   create(itemCreateInput: ItemCreateInput) {
     return this.prisma.item.create({
-      data: {
+      data: <Prisma.ItemCreateInput>{
         name: itemCreateInput.name,
         manufacturing_date: itemCreateInput.manufacturing_date,
         expiry_date: itemCreateInput.expiry_date,
@@ -51,7 +52,7 @@ export class ItemsService {
   update(itemID: string, itemUpdateInput: ItemUpdateInput) {
     return this.prisma.item.update({
       where: { itemId: itemID },
-      data: {
+      data: <Prisma.ItemUpdateInput>{
         name: itemUpdateInput.name,
         manufacturing_date: itemUpdateInput.manufacturing_date,
         expiry_date: itemUpdateInput.expiry_date,
