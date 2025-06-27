@@ -58,6 +58,7 @@ model User {
   roleId               String?                @map("roleID") 
   created_at           DateTime               @default(now()) 
   updated_at           DateTime               @updatedAt
+  refresh_token        String?
 
   // Relationships
   role                 Role?                  @relation(fields: [roleId], references: [roleId], onDelete: SetNull, onUpdate: Cascade)

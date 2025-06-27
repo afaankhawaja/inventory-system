@@ -84,6 +84,7 @@ export class UsersService {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         password_hash: encryptedPassword,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        refresh_token: updateUserInput.refresh_token,
         role: updateUserInput.role
           ? {
               ...(updateUserInput.role.connect && {

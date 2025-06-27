@@ -417,6 +417,7 @@ type User {
   roleId: String
   created_at: DateTime!
   updated_at: DateTime!
+  refresh_token: String
   role: Role
   auditLogs: [AuditLog!]
   alerts: [Alert!]
@@ -430,6 +431,11 @@ type User {
   _count: UserCount!
 }
 
+type AuthTokens {
+  access_token: String!
+  refresh_token: String!
+}
+
 type Query {
   hello: String!
   users: [User!]!
@@ -440,7 +446,8 @@ type Mutation {
   createUser(createUserInput: UserCreateInput!): User!
   updateUser(userID: String!, updateUserInput: UserUpdateInput!): User!
   removeUser(userID: String!): User!
-  signin(username: String!, password: String!): String!
+  signin(username: String!, password: String!): AuthTokens!
+  refreshToken(refresh_token: String!): AuthTokens!
 }
 
 input UserCreateInput {
@@ -457,6 +464,7 @@ input UserCreateInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   alerts: AlertCreateNestedManyWithoutUserInput
@@ -683,6 +691,7 @@ input UserWhereInput {
   roleId: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
+  refresh_token: StringNullableFilter
   role: RoleNullableScalarRelationFilter
   auditLogs: AuditLogListRelationFilter
   alerts: AlertListRelationFilter
@@ -1619,6 +1628,7 @@ input UserCreateWithoutUserDomainsInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   alerts: AlertCreateNestedManyWithoutUserInput
@@ -1849,6 +1859,7 @@ input UserCreateWithoutMaintenanceSchedulesInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   alerts: AlertCreateNestedManyWithoutUserInput
@@ -1972,6 +1983,7 @@ input UserCreateWithoutAlertsInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   receipts: ReceiptCreateNestedManyWithoutUserInput
@@ -2088,6 +2100,7 @@ input UserCreateWithoutReceiptsInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   alerts: AlertCreateNestedManyWithoutUserInput
@@ -2323,6 +2336,7 @@ input UserCreateWithoutFavoritesInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   alerts: AlertCreateNestedManyWithoutUserInput
@@ -2522,6 +2536,7 @@ input UserCreateWithoutTemplatesInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   alerts: AlertCreateNestedManyWithoutUserInput
@@ -2738,6 +2753,7 @@ input UserCreateWithoutTransactionsInput {
   image_path: String
   created_at: DateTime
   updated_at: DateTime
+  refresh_token: String
   role: RoleCreateNestedOneWithoutUsersInput
   auditLogs: AuditLogCreateNestedManyWithoutUserInput
   alerts: AlertCreateNestedManyWithoutUserInput
@@ -2772,6 +2788,7 @@ input UserWhereUniqueInput {
   roleId: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
+  refresh_token: StringNullableFilter
   role: RoleNullableScalarRelationFilter
   auditLogs: AuditLogListRelationFilter
   alerts: AlertListRelationFilter
@@ -3968,6 +3985,7 @@ input UserUpdateInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   alerts: AlertUpdateManyWithoutUserNestedInput
@@ -4424,6 +4442,7 @@ input UserUpdateWithoutUserDomainsInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   alerts: AlertUpdateManyWithoutUserNestedInput
@@ -4782,6 +4801,7 @@ input UserUpdateWithoutMaintenanceSchedulesInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   alerts: AlertUpdateManyWithoutUserNestedInput
@@ -4972,6 +4992,7 @@ input UserUpdateWithoutAlertsInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   receipts: ReceiptUpdateManyWithoutUserNestedInput
@@ -5144,6 +5165,7 @@ input UserUpdateWithoutReceiptsInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   alerts: AlertUpdateManyWithoutUserNestedInput
@@ -5507,6 +5529,7 @@ input UserUpdateWithoutFavoritesInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   alerts: AlertUpdateManyWithoutUserNestedInput
@@ -5811,6 +5834,7 @@ input UserUpdateWithoutTemplatesInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   alerts: AlertUpdateManyWithoutUserNestedInput
@@ -6099,6 +6123,7 @@ input UserUpdateWithoutTransactionsInput {
   image_path: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
+  refresh_token: NullableStringFieldUpdateOperationsInput
   role: RoleUpdateOneWithoutUsersNestedInput
   auditLogs: AuditLogUpdateManyWithoutUserNestedInput
   alerts: AlertUpdateManyWithoutUserNestedInput
