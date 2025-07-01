@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { ItemsModule } from './items/items.module';
+import { LocationsModule } from './locations/locations.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -21,6 +22,7 @@ import { ItemsModule } from './items/items.module';
     UsersModule,
     AuthModule,
     ItemsModule,
+    LocationsModule,
   ],
   providers: [AppService, AppResolver, PrismaService],
 })

@@ -442,6 +442,8 @@ type Query {
   user(username: String!): User!
   items: [Item!]!
   findOne(itemID: String!): Item!
+  locations: [Location!]!
+  location(locationID: String!): Location!
 }
 
 type Mutation {
@@ -453,6 +455,9 @@ type Mutation {
   createItem(itemCreateInput: ItemCreateInput!): Item!
   updateItem(itemUpdateInput: ItemUpdateInput!, itemID: String!): Item!
   removeItem(itemID: String!): Item!
+  createLocation(locationCreateInput: LocationCreateInput!): Location!
+  updateLocation(locationUpdateInput: LocationUpdateInput!, locationID: String!): Location!
+  removeLocation(locationID: String!): Location!
 }
 
 input UserCreateInput {
@@ -7249,4 +7254,34 @@ input ItemUpdateInput {
   favoriteItems: FavoriteItemUpdateManyWithoutItemNestedInput
   templateItems: TemplateItemUpdateManyWithoutItemNestedInput
   transactionItems: TransactionItemUpdateManyWithoutItemNestedInput
+}
+
+input LocationCreateInput {
+  locationId: String
+  location_name: String
+  location_address: String
+  created_at: DateTime
+  updated_at: DateTime
+  domain: DomainCreateNestedOneWithoutLocationsInput
+  parentLocation: LocationCreateNestedOneWithoutSubLocationsInput
+  subLocations: LocationCreateNestedManyWithoutParentLocationInput
+  items: ItemCreateNestedManyWithoutLocationInput
+  vendors: VendorCreateNestedManyWithoutLocationInput
+  transactionsTo: TransactionCreateNestedManyWithoutToLocationRefInput
+  transactionsFrom: TransactionCreateNestedManyWithoutFromLocationRefInput
+}
+
+input LocationUpdateInput {
+  locationId: StringFieldUpdateOperationsInput
+  location_name: NullableStringFieldUpdateOperationsInput
+  location_address: NullableStringFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
+  updated_at: DateTimeFieldUpdateOperationsInput
+  domain: DomainUpdateOneWithoutLocationsNestedInput
+  parentLocation: LocationUpdateOneWithoutSubLocationsNestedInput
+  subLocations: LocationUpdateManyWithoutParentLocationNestedInput
+  items: ItemUpdateManyWithoutLocationNestedInput
+  vendors: VendorUpdateManyWithoutLocationNestedInput
+  transactionsTo: TransactionUpdateManyWithoutToLocationRefNestedInput
+  transactionsFrom: TransactionUpdateManyWithoutFromLocationRefNestedInput
 }
