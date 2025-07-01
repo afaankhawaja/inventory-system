@@ -450,6 +450,8 @@ type Query {
   domainsForUser(userId: String!): [UserDomain!]!
   categories: [Category!]!
   category(categoryID: String!): Category!
+  vendors: [Vendor!]!
+  vendor(vendorID: String!): Vendor!
 }
 
 type Mutation {
@@ -472,6 +474,9 @@ type Mutation {
   createCategory(categoryCreateInput: CategoryCreateInput!): Category!
   updateCategory(categoryUpdateInput: CategoryUpdateInput!, categoryID: String!): Category!
   removeCategory(categoryID: String!): Category!
+  createVendor(vendorCreateInput: VendorCreateInput!): Vendor!
+  updateVendor(vendorUpdateInput: VendorUpdateInput!, vendorID: String!): Vendor!
+  removeVendor(vendorID: String!): Vendor!
 }
 
 input UserCreateInput {
@@ -7346,4 +7351,38 @@ input CategoryUpdateInput {
   parent: CategoryUpdateOneWithoutSubCategoriesNestedInput
   subCategories: CategoryUpdateManyWithoutParentNestedInput
   items: ItemUpdateManyWithoutCategoryNestedInput
+}
+
+input VendorCreateInput {
+  vendorId: String
+  name: String
+  phone: String
+  address: String
+  is_active: Boolean
+  rating: Decimal
+  age: Int
+  cnic: String
+  image_path: String
+  created_at: DateTime
+  updated_at: DateTime
+  location: LocationCreateNestedOneWithoutVendorsInput
+  receipts: ReceiptCreateNestedManyWithoutVendorInput
+  purchaseHistories: PurchaseHistoryCreateNestedManyWithoutVendorInput
+}
+
+input VendorUpdateInput {
+  vendorId: StringFieldUpdateOperationsInput
+  name: NullableStringFieldUpdateOperationsInput
+  phone: NullableStringFieldUpdateOperationsInput
+  address: NullableStringFieldUpdateOperationsInput
+  is_active: NullableBoolFieldUpdateOperationsInput
+  rating: NullableDecimalFieldUpdateOperationsInput
+  age: NullableIntFieldUpdateOperationsInput
+  cnic: NullableStringFieldUpdateOperationsInput
+  image_path: NullableStringFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
+  updated_at: DateTimeFieldUpdateOperationsInput
+  location: LocationUpdateOneWithoutVendorsNestedInput
+  receipts: ReceiptUpdateManyWithoutVendorNestedInput
+  purchaseHistories: PurchaseHistoryUpdateManyWithoutVendorNestedInput
 }
