@@ -129,14 +129,12 @@ export class UsersService {
         age: updateUserInput.age,
         cnic: updateUserInput.cnic,
         image_path: updateUserInput.image_path,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         password_hash: encryptedPassword,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         refresh_token: updateUserInput.refresh_token,
         role: updateUserInput.role
           ? {
               ...(updateUserInput.role.connect && {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 connect: updateUserInput.role.connect,
               }),
               ...(updateUserInput.role.disconnect && {

@@ -448,6 +448,8 @@ type Query {
   domain(domainID: String!): Domain!
   usersInDomain(domainId: String!): [UserDomain!]!
   domainsForUser(userId: String!): [UserDomain!]!
+  categories: [Category!]!
+  category(categoryID: String!): Category!
 }
 
 type Mutation {
@@ -467,6 +469,9 @@ type Mutation {
   removeDomain(domainID: String!): Domain!
   assignUserToDomain(userId: String!, domainId: String!): UserDomain!
   removeUserFromDomain(userId: String!, domainId: String!): UserDomain!
+  createCategory(categoryCreateInput: CategoryCreateInput!): Category!
+  updateCategory(categoryUpdateInput: CategoryUpdateInput!, categoryID: String!): Category!
+  removeCategory(categoryID: String!): Category!
 }
 
 input UserCreateInput {
@@ -7317,4 +7322,28 @@ input DomainUpdateInput {
   subDomains: DomainUpdateManyWithoutParentDomainNestedInput
   userDomains: UserDomainUpdateManyWithoutDomainNestedInput
   locations: LocationUpdateManyWithoutDomainNestedInput
+}
+
+input CategoryCreateInput {
+  categoryId: String
+  name: String
+  created_date: DateTime
+  description: String
+  created_at: DateTime
+  updated_at: DateTime
+  parent: CategoryCreateNestedOneWithoutSubCategoriesInput
+  subCategories: CategoryCreateNestedManyWithoutParentInput
+  items: ItemCreateNestedManyWithoutCategoryInput
+}
+
+input CategoryUpdateInput {
+  categoryId: StringFieldUpdateOperationsInput
+  name: NullableStringFieldUpdateOperationsInput
+  created_date: NullableDateTimeFieldUpdateOperationsInput
+  description: NullableStringFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
+  updated_at: DateTimeFieldUpdateOperationsInput
+  parent: CategoryUpdateOneWithoutSubCategoriesNestedInput
+  subCategories: CategoryUpdateManyWithoutParentNestedInput
+  items: ItemUpdateManyWithoutCategoryNestedInput
 }
