@@ -444,6 +444,10 @@ type Query {
   findOne(itemID: String!): Item!
   locations: [Location!]!
   location(locationID: String!): Location!
+  domains: [Domain!]!
+  domain(domainID: String!): Domain!
+  usersInDomain(domainId: String!): [UserDomain!]!
+  domainsForUser(userId: String!): [UserDomain!]!
 }
 
 type Mutation {
@@ -458,6 +462,11 @@ type Mutation {
   createLocation(locationCreateInput: LocationCreateInput!): Location!
   updateLocation(locationUpdateInput: LocationUpdateInput!, locationID: String!): Location!
   removeLocation(locationID: String!): Location!
+  createDomain(createDomainInput: DomainCreateInput!): Domain!
+  updateDomain(domainID: String!, updateDomainInput: DomainUpdateInput!): Domain!
+  removeDomain(domainID: String!): Domain!
+  assignUserToDomain(userId: String!, domainId: String!): UserDomain!
+  removeUserFromDomain(userId: String!, domainId: String!): UserDomain!
 }
 
 input UserCreateInput {
@@ -7284,4 +7293,28 @@ input LocationUpdateInput {
   vendors: VendorUpdateManyWithoutLocationNestedInput
   transactionsTo: TransactionUpdateManyWithoutToLocationRefNestedInput
   transactionsFrom: TransactionUpdateManyWithoutFromLocationRefNestedInput
+}
+
+input DomainCreateInput {
+  domainId: String
+  name: String
+  description: String
+  created_at: DateTime
+  updated_at: DateTime
+  parentDomain: DomainCreateNestedOneWithoutSubDomainsInput
+  subDomains: DomainCreateNestedManyWithoutParentDomainInput
+  userDomains: UserDomainCreateNestedManyWithoutDomainInput
+  locations: LocationCreateNestedManyWithoutDomainInput
+}
+
+input DomainUpdateInput {
+  domainId: StringFieldUpdateOperationsInput
+  name: NullableStringFieldUpdateOperationsInput
+  description: NullableStringFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
+  updated_at: DateTimeFieldUpdateOperationsInput
+  parentDomain: DomainUpdateOneWithoutSubDomainsNestedInput
+  subDomains: DomainUpdateManyWithoutParentDomainNestedInput
+  userDomains: UserDomainUpdateManyWithoutDomainNestedInput
+  locations: LocationUpdateManyWithoutDomainNestedInput
 }

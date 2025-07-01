@@ -38,25 +38,66 @@ export class UsersService {
               }),
             }
           : undefined,
+        userDomains: createUserInput.userDomains
+          ? {
+              ...(createUserInput.userDomains.create && {
+                create: createUserInput.userDomains.create,
+              }),
+              ...(createUserInput.userDomains.connect && {
+                connect: createUserInput.userDomains.connect,
+              }),
+            }
+          : undefined,
       },
-      include: { role: true },
+      include: {
+        role: true,
+        userDomains: {
+          include: {
+            domain: true,
+          },
+        },
+      },
     });
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      include: {
+        role: true,
+        userDomains: {
+          include: {
+            domain: true,
+          },
+        },
+      },
+    });
   }
 
   findOne(userID: string) {
     return this.prisma.user.findUnique({
       where: { userId: userID },
-      include: { role: true },
+      include: {
+        role: true,
+        userDomains: {
+          include: {
+            domain: true,
+          },
+        },
+      },
     });
   }
+
   findOneByUserName(username: string) {
     return this.prisma.user.findUnique({
       where: { username: username },
-      include: { role: true },
+      include: {
+        role: true,
+        userDomains: {
+          include: {
+            domain: true,
+          },
+        },
+      },
     });
   }
 
@@ -70,7 +111,14 @@ export class UsersService {
       where: {
         userId: userID,
       },
-      include: { role: true },
+      include: {
+        role: true,
+        userDomains: {
+          include: {
+            domain: true,
+          },
+        },
+      },
       data: {
         username: updateUserInput.username,
         email: updateUserInput.email,
@@ -96,6 +144,22 @@ export class UsersService {
               }),
               ...(updateUserInput.role.update && {
                 update: updateUserInput.role.update,
+              }),
+            }
+          : undefined,
+        userDomains: updateUserInput.userDomains
+          ? {
+              ...(updateUserInput.userDomains.create && {
+                create: updateUserInput.userDomains.create,
+              }),
+              ...(updateUserInput.userDomains.connect && {
+                connect: updateUserInput.userDomains.connect,
+              }),
+              ...(updateUserInput.userDomains.disconnect && {
+                disconnect: updateUserInput.userDomains.disconnect,
+              }),
+              ...(updateUserInput.userDomains.delete && {
+                delete: updateUserInput.userDomains.delete,
               }),
             }
           : undefined,

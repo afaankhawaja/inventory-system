@@ -1,5 +1,3 @@
-// src/location/location.service.ts
-
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LocationCreateInput } from 'src/@generated/location/location-create.input';

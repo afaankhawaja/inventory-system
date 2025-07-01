@@ -1,5 +1,3 @@
-// src/location/location.resolver.ts
-
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { LocationsService } from './locations.service';
 import { Location } from 'src/@generated/location/location.model';
