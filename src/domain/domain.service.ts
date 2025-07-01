@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DomainCreateInput } from './../@generated/domain/domain-create.input';
-import { DomainUpdateInput } from './../@generated/domain/domain-update.input';
+import { DomainCreateInput } from 'src/@generated/domain/domain-create.input';
+import { DomainUpdateInput } from 'src/@generated/domain/domain-update.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from 'generated/prisma';
 

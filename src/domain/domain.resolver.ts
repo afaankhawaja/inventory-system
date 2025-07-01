@@ -1,9 +1,9 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { DomainsService } from './domain.service';
-import { Domain } from './../@generated/domain/domain.model';
-import { DomainCreateInput } from './../@generated/domain/domain-create.input';
-import { DomainUpdateInput } from './../@generated/domain/domain-update.input';
-import { UserDomain } from './../@generated/user-domain/user-domain.model';
+import { Domain } from 'src/@generated/domain/domain.model';
+import { DomainCreateInput } from 'src/@generated/domain/domain-create.input';
+import { DomainUpdateInput } from 'src/@generated/domain/domain-update.input';
+import { UserDomain } from 'src/@generated/user-domain/user-domain.model';
 
 @Resolver(() => Domain)
 export class DomainsResolver {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UserCreateInput } from './../@generated/user/user-create.input';
-import { UserUpdateInput } from './../@generated/user/user-update.input';
+import { UserCreateInput } from 'src/@generated/user/user-create.input';
+import { UserUpdateInput } from 'src/@generated/user/user-update.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { encrypt } from 'src/helpers/crypto';
 
