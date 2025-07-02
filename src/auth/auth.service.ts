@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { decrypt } from 'src/helpers/crypto';
 import { UserUpdateInput } from 'src/@generated/user/user-update.input';
 import { AuthTokens } from './auth.types';
+import { Role } from 'src/roles/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,7 @@ export class AuthService {
     const payload = {
       sub: user.userId,
       username: user.username,
+      role: user.role?.name as Role,
     };
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: '15m',
@@ -50,6 +52,7 @@ export class AuthService {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const payload = await this.jwtService.verifyAsync(refreshToken);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       const user = await this.usersService.findOne(payload.sub);
       if (!user || user.refresh_token !== refreshToken) {
         throw new UnauthorizedException();

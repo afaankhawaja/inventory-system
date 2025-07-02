@@ -3,12 +3,19 @@ import { ItemsService } from './items.service';
 import { Item } from 'src/@generated/item/item.model';
 import { ItemCreateInput } from 'src/@generated/item/item-create.input';
 import { ItemUpdateInput } from 'src/@generated/item/item-update.input';
+import { UseGuards } from '@nestjs/common';
+import { Roles } from 'src/roles/roles.decorator';
+import { Role } from 'src/roles/role.enum';
+import { AuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/roles/roles.guard';
 
 @Resolver(() => Item)
 export class ItemsResolver {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Mutation(() => Item)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   createItem(@Args('itemCreateInput') itemCreateInput: ItemCreateInput) {
     return this.itemsService.create(itemCreateInput);
   }
