@@ -8,7 +8,7 @@ import { ROLES_KEY } from './roles.decorator';
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -17,7 +17,7 @@ export class RolesGuard implements CanActivate {
 
     const ctx = GqlExecutionContext.create(context);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const user = ctx.getContext().user;
+    const user = await ctx.getContext().user;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     return requiredRoles.includes(user?.role);
   }
