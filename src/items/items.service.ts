@@ -110,7 +110,12 @@ export class ItemsService {
     });
   }
   findAll() {
-    return this.prisma.item.findMany();
+    return this.prisma.item.findMany({
+      include: {
+        category: true,
+        location: true,
+      },
+    });
   }
   findOne(itemID: string) {
     return this.prisma.item.findUnique({

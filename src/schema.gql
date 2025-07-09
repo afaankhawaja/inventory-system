@@ -439,7 +439,8 @@ type AuthTokens {
 type Query {
   hello: String!
   users: [User!]!
-  user(username: String!): User!
+  user(userID: String!): User!
+  username(username: String!): User!
   items: [Item!]!
   findOne(itemID: String!): Item!
   locations: [Location!]!
