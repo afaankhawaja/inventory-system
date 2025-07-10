@@ -14,6 +14,7 @@ import { LocationsModule } from './locations/locations.module';
 import { DomainModule } from './domain/domain.module';
 import { CategoriesModule } from './categories/categories.module';
 import { VendorsModule } from './vendors/vendors.module';
+import { RolesModule } from './roles/roles.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -29,6 +30,7 @@ import { VendorsModule } from './vendors/vendors.module';
     DomainModule,
     CategoriesModule,
     VendorsModule,
+    RolesModule,
   ],
   providers: [AppService, AppResolver, PrismaService],
 })

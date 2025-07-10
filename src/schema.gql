@@ -453,6 +453,7 @@ type Query {
   category(categoryID: String!): Category!
   vendors: [Vendor!]!
   vendor(vendorID: String!): Vendor!
+  roles: [Role!]!
 }
 
 type Mutation {
