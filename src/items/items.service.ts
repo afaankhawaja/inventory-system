@@ -64,14 +64,12 @@ export class ItemsService {
         brand: itemUpdateInput.brand,
         barcode: itemUpdateInput.barcode,
         image_path: itemUpdateInput.image_path,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         category: itemUpdateInput.category
           ? {
               ...(itemUpdateInput.category.update && {
                 update: itemUpdateInput.category.update,
               }),
               ...(itemUpdateInput.category.connect && {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 connect: itemUpdateInput.category.connect,
               }),
               ...(itemUpdateInput.category.disconnect && {
@@ -82,14 +80,12 @@ export class ItemsService {
               }),
             }
           : undefined,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         location: itemUpdateInput.location
           ? {
               ...(itemUpdateInput.location.update && {
                 update: itemUpdateInput.location.update,
               }),
               ...(itemUpdateInput.location.connect && {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 connect: itemUpdateInput.location.connect,
               }),
               ...(itemUpdateInput.location.disconnect && {
@@ -120,6 +116,10 @@ export class ItemsService {
   findOne(itemID: string) {
     return this.prisma.item.findUnique({
       where: { itemId: itemID },
+      include: {
+        category: true,
+        location: true,
+      },
     });
   }
 }

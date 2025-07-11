@@ -14,13 +14,13 @@ export class ItemsResolver {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Mutation(() => Item)
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   createItem(@Args('itemCreateInput') itemCreateInput: ItemCreateInput) {
     return this.itemsService.create(itemCreateInput);
   }
 
   @Mutation(() => Item)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   updateItem(
     @Args('itemUpdateInput') itemUpdateInput: ItemUpdateInput,
     @Args('itemID') itemID: string,
@@ -29,6 +29,8 @@ export class ItemsResolver {
   }
 
   @Mutation(() => Item)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN)
   removeItem(@Args('itemID') itemID: string) {
     return this.itemsService.remove(itemID);
   }
@@ -38,8 +40,8 @@ export class ItemsResolver {
     return this.itemsService.findAll();
   }
 
-  @Query(() => Item)
-  findOne(@Args('itemID') itemID: string) {
+  @Query(() => Item, { name: 'item' })
+  findOne(@Args('itemID', { type: () => String }) itemID: string) {
     return this.itemsService.findOne(itemID);
   }
 }

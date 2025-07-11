@@ -45,6 +45,14 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
+  updateCurrentUser(
+    @Args('userID', { type: () => String }) userID: string,
+    @Args('updateUserInput') updateUserInput: UserUpdateInput,
+  ) {
+    return this.usersService.update(userID, updateUserInput);
+  }
+
+  @Mutation(() => User)
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN)
   removeUser(@Args('userID', { type: () => String }) userID: string) {

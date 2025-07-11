@@ -442,7 +442,7 @@ type Query {
   user(userID: String!): User!
   username(username: String!): User!
   items: [Item!]!
-  findOne(itemID: String!): Item!
+  item(itemID: String!): Item!
   locations: [Location!]!
   location(locationID: String!): Location!
   domains: [Domain!]!
@@ -459,6 +459,7 @@ type Query {
 type Mutation {
   createUser(createUserInput: UserCreateInput!): User!
   updateUser(userID: String!, updateUserInput: UserUpdateInput!): User!
+  updateCurrentUser(userID: String!, updateUserInput: UserUpdateInput!): User!
   removeUser(userID: String!): User!
   signin(username: String!, password: String!): AuthTokens!
   refreshToken(refresh_token: String!): AuthTokens!
