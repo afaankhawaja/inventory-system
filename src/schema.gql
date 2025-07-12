@@ -458,6 +458,7 @@ type Query {
 
 type Mutation {
   createUser(createUserInput: UserCreateInput!): User!
+  signupUser(createUserInput: UserCreateInput!): User!
   updateUser(userID: String!, updateUserInput: UserUpdateInput!): User!
   updateCurrentUser(userID: String!, updateUserInput: UserUpdateInput!): User!
   removeUser(userID: String!): User!

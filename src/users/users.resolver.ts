@@ -14,7 +14,14 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(() => User)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   createUser(@Args('createUserInput') createUserInput: UserCreateInput) {
+    return this.usersService.create(createUserInput);
+  }
+
+  @Mutation(() => User)
+  signupUser(@Args('createUserInput') createUserInput: UserCreateInput) {
     return this.usersService.create(createUserInput);
   }
 
