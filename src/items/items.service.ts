@@ -4,6 +4,31 @@ import { ItemCreateInput } from 'src/@generated/item/item-create.input';
 import { ItemUpdateInput } from 'src/@generated/item/item-update.input';
 import { Prisma } from 'generated/prisma';
 
+function getTodayAndYesterdayDateRanges() {
+  const now = new Date();
+
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todayEnd = new Date(now);
+  todayEnd.setHours(23, 59, 59, 999);
+
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+  const yesterdayEnd = new Date(todayEnd);
+  yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
+
+  return {
+    todayStart,
+    todayEnd,
+    yesterdayStart,
+    yesterdayEnd,
+  };
+}
+
+const { todayStart, todayEnd, yesterdayStart, yesterdayEnd } =
+  getTodayAndYesterdayDateRanges();
 @Injectable()
 export class ItemsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -118,6 +143,31 @@ export class ItemsService {
       this.prisma.item.count(),
     ]);
     return { items, total };
+  }
+  async findYesterdayCreatedItems() {
+    const [items] = await Promise.all([
+      this.prisma.item.findMany({
+        where: {
+          created_at: {
+            lte: yesterdayEnd,
+          },
+        },
+      }),
+    ]);
+    return items;
+  }
+  async findTodayCreatedItems() {
+    const [items] = await Promise.all([
+      this.prisma.item.findMany({
+        where: {
+          created_at: {
+            lte: todayEnd,
+          },
+        },
+      }),
+      this.prisma.item.count(),
+    ]);
+    return items;
   }
   findOne(itemID: string) {
     return this.prisma.item.findUnique({

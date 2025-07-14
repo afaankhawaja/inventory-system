@@ -44,6 +44,16 @@ export class ItemsResolver {
     return this.itemsService.findAll(skip, take);
   }
 
+  @Query(() => [Item], { name: 'yesterdayItems' })
+  findYesterdayCreatedItems() {
+    return this.itemsService.findYesterdayCreatedItems();
+  }
+
+  @Query(() => [Item], { name: 'todayItems' })
+  findTodayCreatedItems() {
+    return this.itemsService.findTodayCreatedItems();
+  }
+
   @Query(() => Item, { name: 'item' })
   findOne(@Args('itemID', { type: () => String }) itemID: string) {
     return this.itemsService.findOne(itemID);

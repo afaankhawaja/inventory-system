@@ -452,6 +452,8 @@ type Query {
   user(userID: String!): User!
   username(username: String!): User!
   items(skip: Int, take: Int): ItemsPaginated!
+  yesterdayItems: [Item!]!
+  todayItems: [Item!]!
   item(itemID: String!): Item!
   locations: [Location!]!
   location(locationID: String!): Location!
