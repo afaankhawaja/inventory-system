@@ -431,6 +431,11 @@ type User {
   _count: UserCount!
 }
 
+type UsersPaginated {
+  users: [User!]!
+  total: Int!
+}
+
 type AuthTokens {
   access_token: String!
   refresh_token: String!
@@ -443,7 +448,7 @@ type ItemsPaginated {
 
 type Query {
   hello: String!
-  users: [User!]!
+  users(skip: Int, take: Int): UsersPaginated!
   user(userID: String!): User!
   username(username: String!): User!
   items(skip: Int, take: Int): ItemsPaginated!

@@ -60,17 +60,23 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return this.prisma.user.findMany({
-      include: {
-        role: true,
-        userDomains: {
-          include: {
-            domain: true,
+  async findAll(skip?: number, take?: number) {
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        skip,
+        take,
+        include: {
+          role: true,
+          userDomains: {
+            include: {
+              domain: true,
+            },
           },
         },
-      },
-    });
+      }),
+      this.prisma.user.count(),
+    ]);
+    return { users, total };
   }
 
   findOne(userID: string) {
