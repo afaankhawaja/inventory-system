@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ItemsService } from './items.service';
 import { Item } from 'src/@generated/item/item.model';
 import { ItemCreateInput } from 'src/@generated/item/item-create.input';
@@ -8,6 +8,7 @@ import { Roles } from 'src/roles/roles.decorator';
 import { Role } from 'src/roles/role.enum';
 import { AuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/roles/roles.guard';
+import { ItemsPaginated } from 'src/pagination-dto/items-paginated.model';
 
 @Resolver(() => Item)
 export class ItemsResolver {
@@ -35,9 +36,12 @@ export class ItemsResolver {
     return this.itemsService.remove(itemID);
   }
 
-  @Query(() => [Item], { name: 'items' })
-  findAll() {
-    return this.itemsService.findAll();
+  @Query(() => ItemsPaginated, { name: 'items' })
+  findAll(
+    @Args('skip', { type: () => Int, nullable: true }) skip?: number,
+    @Args('take', { type: () => Int, nullable: true }) take?: number,
+  ) {
+    return this.itemsService.findAll(skip, take);
   }
 
   @Query(() => Item, { name: 'item' })

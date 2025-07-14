@@ -436,12 +436,17 @@ type AuthTokens {
   refresh_token: String!
 }
 
+type ItemsPaginated {
+  items: [Item!]!
+  total: Int!
+}
+
 type Query {
   hello: String!
   users: [User!]!
   user(userID: String!): User!
   username(username: String!): User!
-  items: [Item!]!
+  items(skip: Int, take: Int): ItemsPaginated!
   item(itemID: String!): Item!
   locations: [Location!]!
   location(locationID: String!): Location!

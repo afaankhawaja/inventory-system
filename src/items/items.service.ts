@@ -105,13 +105,19 @@ export class ItemsService {
       where: { itemId: itemID },
     });
   }
-  findAll() {
-    return this.prisma.item.findMany({
-      include: {
-        category: true,
-        location: true,
-      },
-    });
+  async findAll(skip?: number, take?: number) {
+    const [items, total] = await Promise.all([
+      this.prisma.item.findMany({
+        skip,
+        take,
+        include: {
+          category: true,
+          location: true,
+        },
+      }),
+      this.prisma.item.count(),
+    ]);
+    return { items, total };
   }
   findOne(itemID: string) {
     return this.prisma.item.findUnique({
