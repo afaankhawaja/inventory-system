@@ -466,6 +466,8 @@ type Query {
   vendors: [Vendor!]!
   vendor(vendorID: String!): Vendor!
   roles: [Role!]!
+  transaction(transactionId: String!): Transaction!
+  transactionsWithItems: [Transaction!]!
 }
 
 type Mutation {
@@ -493,6 +495,9 @@ type Mutation {
   createVendor(vendorCreateInput: VendorCreateInput!): Vendor!
   updateVendor(vendorUpdateInput: VendorUpdateInput!, vendorID: String!): Vendor!
   removeVendor(vendorID: String!): Vendor!
+  checkOut(userId: String!, itemId: String!, quantity: Float!): Transaction!
+  checkIn(userId: String!, itemId: String!, quantity: Float!): Transaction!
+  removeTransaction(transactionId: String!): Transaction!
 }
 
 input UserCreateInput {
