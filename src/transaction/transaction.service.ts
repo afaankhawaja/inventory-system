@@ -61,8 +61,10 @@ export class TransactionsService {
     });
   }
 
-  async findAllWithItems() {
-    return this.prisma.transaction.findMany({
+  async findAllWithItems(skip?: number, take?: number) {
+    const transactions = await this.prisma.transaction.findMany({
+      skip,
+      take,
       include: {
         transactionItems: {
           include: {
@@ -70,6 +72,8 @@ export class TransactionsService {
               select: {
                 itemId: true,
                 name: true,
+                price: true,
+                is_high_value: true,
               },
             },
           },
@@ -81,6 +85,14 @@ export class TransactionsService {
           },
         },
       },
+      orderBy: {
+        transaction_date: 'desc',
+      },
     });
+    const total = await this.prisma.transaction.count();
+    return {
+      transactions,
+      total,
+    };
   }
 }

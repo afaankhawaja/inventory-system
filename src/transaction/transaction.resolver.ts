@@ -1,6 +1,7 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TransactionsService } from './transaction.service';
 import { Transaction } from 'src/@generated/transaction/transaction.model';
+import { TransactionPaginated } from 'src/pagination-dto/transaction-paginated.model';
 
 @Resolver()
 export class TransactionResolver {
@@ -38,8 +39,11 @@ export class TransactionResolver {
     return this.transactionService.findOne(transactionId);
   }
 
-  @Query(() => [Transaction], { name: 'transactionsWithItems' })
-  getAllTransactionsWithItems() {
-    return this.transactionService.findAllWithItems();
+  @Query(() => TransactionPaginated, { name: 'transactionsWithItems' })
+  getAllTransactionsWithItems(
+    @Args('skip', { type: () => Int, nullable: true }) skip?: number,
+    @Args('take', { type: () => Int, nullable: true }) take?: number,
+  ) {
+    return this.transactionService.findAllWithItems(skip, take);
   }
 }

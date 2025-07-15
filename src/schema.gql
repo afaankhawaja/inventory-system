@@ -446,6 +446,11 @@ type ItemsPaginated {
   total: Int!
 }
 
+type TransactionPaginated {
+  transactions: [Transaction!]!
+  total: Int!
+}
+
 type Query {
   hello: String!
   users(skip: Int, take: Int): UsersPaginated!
@@ -467,7 +472,7 @@ type Query {
   vendor(vendorID: String!): Vendor!
   roles: [Role!]!
   transaction(transactionId: String!): Transaction!
-  transactionsWithItems: [Transaction!]!
+  transactionsWithItems(skip: Int, take: Int): TransactionPaginated!
 }
 
 type Mutation {
