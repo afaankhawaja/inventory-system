@@ -460,8 +460,9 @@ type Query {
   yesterdayItems: [Item!]!
   todayItems: [Item!]!
   item(itemID: String!): Item!
-  locations: [Location!]!
+  locations(rootsOnly: Boolean): [Location!]!
   location(locationID: String!): Location!
+  locationPath(locationID: String!): [Location!]!
   domains: [Domain!]!
   domain(domainID: String!): Domain!
   usersInDomain(domainId: String!): [UserDomain!]!

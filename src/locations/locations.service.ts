@@ -37,6 +37,16 @@ export class LocationsService {
               }),
             }
           : undefined,
+        subLocations: locationCreateInput.subLocations
+          ? {
+              ...(locationCreateInput.subLocations.create && {
+                create: locationCreateInput.subLocations.create,
+              }),
+              ...(locationCreateInput.subLocations.connect && {
+                connect: locationCreateInput.subLocations.connect,
+              }),
+            }
+          : undefined,
       },
       include: {
         domain: true,
@@ -103,12 +113,19 @@ export class LocationsService {
     });
   }
 
-  findAll() {
+  findAll(rootsOnly: boolean = false) {
+    const whereCondition = rootsOnly ? { parent_location_id: null } : {};
+
     return this.prisma.location.findMany({
+      where: whereCondition,
       include: {
         domain: true,
         parentLocation: true,
-        subLocations: true,
+        subLocations: {
+          include: {
+            subLocations: true,
+          },
+        },
       },
     });
   }
@@ -122,5 +139,39 @@ export class LocationsService {
         subLocations: true,
       },
     });
+  }
+
+  async getLocationPath(locationId: string) {
+    const path: { locationId: string; location_name: string }[] = [];
+
+    let current = await this.prisma.location.findUnique({
+      where: { locationId },
+      select: {
+        locationId: true,
+        location_name: true,
+        parent_location_id: true,
+      },
+    });
+
+    while (current) {
+      path.unshift({
+        locationId: current.locationId,
+        location_name: current.location_name!,
+      });
+
+      if (!current.parent_location_id) {
+        break;
+      }
+      current = await this.prisma.location.findUnique({
+        where: { locationId: current.parent_location_id },
+        select: {
+          locationId: true,
+          location_name: true,
+          parent_location_id: true,
+        },
+      });
+    }
+
+    return path;
   }
 }

@@ -29,12 +29,20 @@ export class LocationsResolver {
   }
 
   @Query(() => [Location], { name: 'locations' })
-  findAll() {
-    return this.locationsService.findAll();
+  findAll(
+    @Args('rootsOnly', { type: () => Boolean, nullable: true })
+    rootsOnly: boolean,
+  ) {
+    return this.locationsService.findAll(rootsOnly);
   }
 
   @Query(() => Location, { name: 'location' })
   findOne(@Args('locationID') locationID: string) {
     return this.locationsService.findOne(locationID);
+  }
+
+  @Query(() => [Location], { name: 'locationPath' })
+  async locationPath(@Args('locationID') locationID: string) {
+    return this.locationsService.getLocationPath(locationID);
   }
 }
