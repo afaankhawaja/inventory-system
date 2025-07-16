@@ -16,8 +16,11 @@ import { CategoriesModule } from './categories/categories.module';
 import { VendorsModule } from './vendors/vendors.module';
 import { RolesModule } from './roles/roles.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AlertModule } from './alert/alert.module';
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -33,6 +36,7 @@ import { TransactionModule } from './transaction/transaction.module';
     VendorsModule,
     RolesModule,
     TransactionModule,
+    AlertModule,
   ],
   providers: [AppService, AppResolver, PrismaService],
 })
