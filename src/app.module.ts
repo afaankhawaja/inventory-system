@@ -18,6 +18,7 @@ import { RolesModule } from './roles/roles.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AlertModule } from './alert/alert.module';
+import { MaintenanceScheduleModule } from './maintenance-schedule/maintenance-schedule.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -37,6 +38,7 @@ import { AlertModule } from './alert/alert.module';
     RolesModule,
     TransactionModule,
     AlertModule,
+    MaintenanceScheduleModule,
   ],
   providers: [AppService, AppResolver, PrismaService],
 })

@@ -456,6 +456,11 @@ type AlertsPaginated {
   total: Int!
 }
 
+type MaintenanceSchedulePaginated {
+  maintenanceSchedules: [MaintenanceSchedule!]!
+  total: Int!
+}
+
 type Query {
   hello: String!
   users(skip: Int, take: Int): UsersPaginated!
@@ -482,6 +487,8 @@ type Query {
   alerts(skip: Int, take: Int): AlertsPaginated!
   alert(alertId: String!): Alert!
   itemAlerts(itemId: String!): [ItemAlert!]!
+  maintenanceSchedules(skip: Int, take: Int): MaintenanceSchedulePaginated!
+  maintenanceSchedule(maintenance_schedule_ID: String!): MaintenanceSchedule!
 }
 
 type Mutation {
@@ -512,6 +519,9 @@ type Mutation {
   checkOut(userId: String!, itemId: String!, quantity: Float!): Transaction!
   checkIn(userId: String!, itemId: String!, quantity: Float!): Transaction!
   removeTransaction(transactionId: String!): Transaction!
+  createMaintenanceSchedule(createMaintenanceScheduleInput: MaintenanceScheduleCreateInput!): MaintenanceSchedule!
+  updateMaintenanceSchedule(maintenance_schedule_ID: String!, statusCheck: String!, updateMaintenanceScheduleInput: MaintenanceScheduleUpdateInput!): MaintenanceSchedule!
+  removeMaintenanceSchedule(maintenance_schedule_ID: String!): MaintenanceSchedule!
 }
 
 input UserCreateInput {
@@ -7420,4 +7430,26 @@ input VendorUpdateInput {
   location: LocationUpdateOneWithoutVendorsNestedInput
   receipts: ReceiptUpdateManyWithoutVendorNestedInput
   purchaseHistories: PurchaseHistoryUpdateManyWithoutVendorNestedInput
+}
+
+input MaintenanceScheduleCreateInput {
+  maintenance_schedule_ID: String
+  maintenance_type: String
+  status: String
+  notes: String
+  createdAt: DateTime!
+  updatedAt: DateTime
+  item: ItemCreateNestedOneWithoutMaintenanceSchedulesInput
+  user: UserCreateNestedOneWithoutMaintenanceSchedulesInput
+}
+
+input MaintenanceScheduleUpdateInput {
+  maintenance_schedule_ID: StringFieldUpdateOperationsInput
+  maintenance_type: NullableStringFieldUpdateOperationsInput
+  status: NullableStringFieldUpdateOperationsInput
+  notes: NullableStringFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  item: ItemUpdateOneWithoutMaintenanceSchedulesNestedInput
+  user: UserUpdateOneWithoutMaintenanceSchedulesNestedInput
 }
