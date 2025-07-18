@@ -99,14 +99,19 @@ export class PurchaseHistoryService {
       where: { purchaseId: purchaseID },
     });
   }
-
-  findAll() {
-    return this.prisma.purchaseHistory.findMany({
-      include: {
-        item: true,
-        vendor: true,
-      },
-    });
+  async findAll(skip?: number, take?: number) {
+    const [purchases, total] = await Promise.all([
+      this.prisma.purchaseHistory.findMany({
+        skip,
+        take,
+        include: {
+          item: true,
+          vendor: true,
+        },
+      }),
+      this.prisma.purchaseHistory.count(),
+    ]);
+    return { purchases, total };
   }
 
   findOne(purchaseID: string) {

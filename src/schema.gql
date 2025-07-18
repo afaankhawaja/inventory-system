@@ -461,6 +461,11 @@ type MaintenanceSchedulePaginated {
   total: Int!
 }
 
+type PurchaseHistoryPaginated {
+  purchases: [PurchaseHistory!]!
+  total: Int!
+}
+
 type Query {
   hello: String!
   users(skip: Int, take: Int): UsersPaginated!
@@ -489,7 +494,7 @@ type Query {
   itemAlerts(itemId: String!): [ItemAlert!]!
   maintenanceSchedules(skip: Int, take: Int): MaintenanceSchedulePaginated!
   maintenanceSchedule(maintenance_schedule_ID: String!): MaintenanceSchedule!
-  purchaseHistories: [PurchaseHistory!]!
+  purchaseHistories(skip: Int, take: Int): PurchaseHistoryPaginated!
   purchaseHistory(purchaseID: String!): PurchaseHistory!
 }
 

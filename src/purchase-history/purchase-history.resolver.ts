@@ -1,8 +1,9 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { PurchaseHistoryService } from './purchase-history.service';
 import { PurchaseHistory } from 'src/@generated/purchase-history/purchase-history.model';
 import { PurchaseHistoryCreateInput } from 'src/@generated/purchase-history/purchase-history-create.input';
 import { PurchaseHistoryUpdateInput } from 'src/@generated/purchase-history/purchase-history-update.input';
+import { PurchaseHistoryPaginated } from 'src/pagination-dto/purchase-history-model';
 
 @Resolver(() => PurchaseHistory)
 export class PurchaseHistoryResolver {
@@ -35,9 +36,12 @@ export class PurchaseHistoryResolver {
     return this.purchaseHistoryService.remove(purchaseID);
   }
 
-  @Query(() => [PurchaseHistory], { name: 'purchaseHistories' })
-  findAll() {
-    return this.purchaseHistoryService.findAll();
+  @Query(() => PurchaseHistoryPaginated, { name: 'purchaseHistories' })
+  findAll(
+    @Args('skip', { type: () => Int, nullable: true }) skip?: number,
+    @Args('take', { type: () => Int, nullable: true }) take?: number,
+  ) {
+    return this.purchaseHistoryService.findAll(skip, take);
   }
 
   @Query(() => PurchaseHistory, { name: 'purchaseHistory' })
