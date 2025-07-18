@@ -19,6 +19,7 @@ import { TransactionModule } from './transaction/transaction.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AlertModule } from './alert/alert.module';
 import { MaintenanceScheduleModule } from './maintenance-schedule/maintenance-schedule.module';
+import { PurchaseHistoryModule } from './purchase-history/purchase-history.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -39,6 +40,7 @@ import { MaintenanceScheduleModule } from './maintenance-schedule/maintenance-sc
     TransactionModule,
     AlertModule,
     MaintenanceScheduleModule,
+    PurchaseHistoryModule,
   ],
   providers: [AppService, AppResolver, PrismaService],
 })

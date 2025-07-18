@@ -489,6 +489,8 @@ type Query {
   itemAlerts(itemId: String!): [ItemAlert!]!
   maintenanceSchedules(skip: Int, take: Int): MaintenanceSchedulePaginated!
   maintenanceSchedule(maintenance_schedule_ID: String!): MaintenanceSchedule!
+  purchaseHistories: [PurchaseHistory!]!
+  purchaseHistory(purchaseID: String!): PurchaseHistory!
 }
 
 type Mutation {
@@ -522,6 +524,9 @@ type Mutation {
   createMaintenanceSchedule(createMaintenanceScheduleInput: MaintenanceScheduleCreateInput!): MaintenanceSchedule!
   updateMaintenanceSchedule(maintenance_schedule_ID: String!, statusCheck: String!, updateMaintenanceScheduleInput: MaintenanceScheduleUpdateInput!): MaintenanceSchedule!
   removeMaintenanceSchedule(maintenance_schedule_ID: String!): MaintenanceSchedule!
+  createPurchaseHistory(purchaseHistoryCreateInput: PurchaseHistoryCreateInput!): PurchaseHistory!
+  updatePurchaseHistory(purchaseHistoryUpdateInput: PurchaseHistoryUpdateInput!, purchaseID: String!): PurchaseHistory!
+  removePurchaseHistory(purchaseID: String!): PurchaseHistory!
 }
 
 input UserCreateInput {
@@ -7452,4 +7457,28 @@ input MaintenanceScheduleUpdateInput {
   updatedAt: DateTimeFieldUpdateOperationsInput
   item: ItemUpdateOneWithoutMaintenanceSchedulesNestedInput
   user: UserUpdateOneWithoutMaintenanceSchedulesNestedInput
+}
+
+input PurchaseHistoryCreateInput {
+  purchaseId: String
+  purchase_date: DateTime
+  quantity: Int
+  unit_price: Decimal
+  total_cost: Decimal
+  created_at: DateTime
+  updated_at: DateTime
+  item: ItemCreateNestedOneWithoutPurchaseHistoriesInput
+  vendor: VendorCreateNestedOneWithoutPurchaseHistoriesInput
+}
+
+input PurchaseHistoryUpdateInput {
+  purchaseId: StringFieldUpdateOperationsInput
+  purchase_date: NullableDateTimeFieldUpdateOperationsInput
+  quantity: NullableIntFieldUpdateOperationsInput
+  unit_price: NullableDecimalFieldUpdateOperationsInput
+  total_cost: NullableDecimalFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
+  updated_at: DateTimeFieldUpdateOperationsInput
+  item: ItemUpdateOneWithoutPurchaseHistoriesNestedInput
+  vendor: VendorUpdateOneWithoutPurchaseHistoriesNestedInput
 }
