@@ -45,7 +45,7 @@ export class PurchaseHistoryResolver {
   }
 
   @Query(() => PurchaseHistory, { name: 'purchaseHistory' })
-  findOne(@Args('purchaseID') purchaseID: string) {
-    return this.purchaseHistoryService.findOne(purchaseID);
+  findOne(@Args('itemID') itemID: string) {
+    return this.purchaseHistoryService.findOne(itemID);
   }
 }

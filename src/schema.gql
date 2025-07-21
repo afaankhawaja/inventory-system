@@ -495,7 +495,7 @@ type Query {
   maintenanceSchedules(skip: Int, take: Int): MaintenanceSchedulePaginated!
   maintenanceSchedule(maintenance_schedule_ID: String!): MaintenanceSchedule!
   purchaseHistories(skip: Int, take: Int): PurchaseHistoryPaginated!
-  purchaseHistory(purchaseID: String!): PurchaseHistory!
+  purchaseHistory(itemID: String!): PurchaseHistory!
 }
 
 type Mutation {

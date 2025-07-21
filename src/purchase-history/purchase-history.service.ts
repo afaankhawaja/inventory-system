@@ -114,9 +114,12 @@ export class PurchaseHistoryService {
     return { purchases, total };
   }
 
-  findOne(purchaseID: string) {
-    return this.prisma.purchaseHistory.findUnique({
-      where: { purchaseId: purchaseID },
+  findOne(itemID: string) {
+    return this.prisma.purchaseHistory.findFirst({
+      where: { itemId: itemID },
+      orderBy: {
+        created_at: 'desc',
+      },
       include: {
         item: true,
         vendor: true,
