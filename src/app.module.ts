@@ -26,7 +26,8 @@ import { PurchaseHistoryModule } from './purchase-history/purchase-history.modul
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      graphiql: true,
+      graphiql: process.env.NODE_ENV !== 'production',
+      introspection: process.env.NODE_ENV !== 'production',
     }),
     PrismaModule,
     UsersModule,
