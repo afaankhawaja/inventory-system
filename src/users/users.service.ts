@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { UserCreateInput } from 'src/@generated/user/user-create.input';
 import { UserUpdateInput } from 'src/@generated/user/user-update.input';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { encrypt } from 'src/helpers/crypto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createUserInput: UserCreateInput) {
+  async create(createUserInput: UserCreateInput) {
     let encryptedPassword;
     if (createUserInput?.password_hash) {
-      encryptedPassword = encrypt(createUserInput?.password_hash);
+      encryptedPassword = await bcrypt.hash(createUserInput?.password_hash, 10);
     }
 
     return this.prisma.user.create({
@@ -107,11 +107,11 @@ export class UsersService {
     });
   }
 
-  update(userID: string, updateUserInput: UserUpdateInput) {
+  async update(userID: string, updateUserInput: UserUpdateInput) {
     let encryptedPassword: string | undefined;
     const pwd_field = updateUserInput.password_hash;
     if (pwd_field?.set) {
-      encryptedPassword = encrypt(pwd_field?.set);
+      encryptedPassword = await bcrypt.hash(pwd_field?.set, 10);
     }
     return this.prisma.user.update({
       where: {

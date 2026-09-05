@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
-import { decrypt } from 'src/helpers/crypto';
+import { JwtService,TokenExpiredError } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { UserUpdateInput } from 'src/@generated/user/user-update.input';
 import { AuthTokens } from './auth.types';
 import { Role } from 'src/roles/role.enum';
@@ -22,9 +22,9 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     if (user?.password_hash) {
-      const decryptedPassword = decrypt(user?.password_hash);
+      const isMatch = await bcrypt.compare(pass, user.password_hash);
 
-      if (pass !== decryptedPassword) {
+      if (!isMatch) {
         throw new UnauthorizedException();
       }
     }
@@ -50,9 +50,7 @@ export class AuthService {
 
   async refreshToken(refreshToken: string): Promise<AuthTokens> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const payload = await this.jwtService.verifyAsync(refreshToken);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       const user = await this.usersService.findOne(payload.sub);
       if (!user || user.refresh_token !== refreshToken) {
         throw new UnauthorizedException();
@@ -63,8 +61,7 @@ export class AuthService {
       });
       return { access_token: newAccessToken, refresh_token: refreshToken };
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (e.name === 'TokenExpiredError') {
+      if (e instanceof TokenExpiredError) {
         throw new UnauthorizedException('Refresh token has expired');
       }
       throw new UnauthorizedException('Invalid refresh token');
