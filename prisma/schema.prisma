@@ -12,6 +12,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator nestgraphql {
@@ -59,6 +60,8 @@ model User {
   created_at           DateTime               @default(now()) 
   updated_at           DateTime               @updatedAt
   refresh_token        String?
+  /// @HideField({ input: true, output: true })
+  token_version        Int                    @default(0)
 
   // Relationships
   role                 Role?                  @relation(fields: [roleId], references: [roleId], onDelete: SetNull, onUpdate: Cascade)

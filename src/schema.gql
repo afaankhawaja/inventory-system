@@ -436,11 +436,6 @@ type UsersPaginated {
   total: Int!
 }
 
-type AuthTokens {
-  access_token: String!
-  refresh_token: String!
-}
-
 type ItemsPaginated {
   items: [Item!]!
   total: Int!
@@ -471,6 +466,7 @@ type Query {
   users(skip: Int, take: Int): UsersPaginated!
   user(userID: String!): User!
   username(username: String!): User!
+  me: User!
   items(skip: Int, take: Int): ItemsPaginated!
   yesterdayItems: [Item!]!
   todayItems: [Item!]!
@@ -504,8 +500,9 @@ type Mutation {
   updateUser(userID: String!, updateUserInput: UserUpdateInput!): User!
   updateCurrentUser(userID: String!, updateUserInput: UserUpdateInput!): User!
   removeUser(userID: String!): User!
-  signin(username: String!, password: String!): AuthTokens!
-  refreshToken(refresh_token: String!): AuthTokens!
+  signin(username: String!, password: String!): Boolean!
+  refreshToken: Boolean!
+  logout: Boolean!
   createItem(itemCreateInput: ItemCreateInput!): Item!
   updateItem(itemUpdateInput: ItemUpdateInput!, itemID: String!): Item!
   removeItem(itemID: String!): Item!

@@ -25,6 +25,7 @@ import { PurchaseHistoryModule } from './purchase-history/purchase-history.modul
     ScheduleModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      context: ({ req, res }: { req: unknown; res: unknown }) => ({ req, res }),
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       graphiql: process.env.NODE_ENV !== 'production',
       introspection: process.env.NODE_ENV !== 'production',

@@ -136,8 +136,7 @@ export class UsersService {
         cnic: updateUserInput.cnic,
         image_path: updateUserInput.image_path,
         password_hash: encryptedPassword,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        refresh_token: updateUserInput.refresh_token,
+        token_version: encryptedPassword ? { increment: 1 } : undefined,
         role: updateUserInput.role
           ? {
               ...(updateUserInput.role.connect && {
