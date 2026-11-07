@@ -9,40 +9,55 @@ export class PurchaseHistoryService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(purchaseHistoryCreateInput: PurchaseHistoryCreateInput) {
-    return this.prisma.purchaseHistory.create({
-      data: <Prisma.PurchaseHistoryCreateInput>{
-        purchase_date: purchaseHistoryCreateInput.purchase_date,
-        quantity: purchaseHistoryCreateInput.quantity,
-        unit_price: purchaseHistoryCreateInput.unit_price,
-        total_cost: purchaseHistoryCreateInput.total_cost,
-        item: purchaseHistoryCreateInput.item
-          ? {
-              ...(purchaseHistoryCreateInput.item.connect && {
-                connect: purchaseHistoryCreateInput.item.connect,
-              }),
-              ...(purchaseHistoryCreateInput.item.create && {
-                create: purchaseHistoryCreateInput.item.create,
-              }),
-            }
-          : undefined,
-        vendor: purchaseHistoryCreateInput.vendor
-          ? {
-              ...(purchaseHistoryCreateInput.vendor.connect && {
-                connect: purchaseHistoryCreateInput.vendor.connect,
-              }),
-              ...(purchaseHistoryCreateInput.vendor.create && {
-                create: purchaseHistoryCreateInput.vendor.create,
-              }),
-            }
-          : undefined,
-      },
-      include: {
-        item: true,
-        vendor: true,
-      },
+    const itemId = purchaseHistoryCreateInput.item?.connect?.itemId;
+    const quantity = purchaseHistoryCreateInput.quantity ?? 0;
+
+    // Save the purchase and add the bought units to stock together, so a
+    // restock can never be recorded without the stock changing (or vice versa).
+    return this.prisma.$transaction(async (tx) => {
+      const purchase = await tx.purchaseHistory.create({
+        data: <Prisma.PurchaseHistoryCreateInput>{
+          purchase_date: purchaseHistoryCreateInput.purchase_date,
+          quantity: purchaseHistoryCreateInput.quantity,
+          unit_price: purchaseHistoryCreateInput.unit_price,
+          total_cost: purchaseHistoryCreateInput.total_cost,
+          item: purchaseHistoryCreateInput.item
+            ? {
+                ...(purchaseHistoryCreateInput.item.connect && {
+                  connect: purchaseHistoryCreateInput.item.connect,
+                }),
+                ...(purchaseHistoryCreateInput.item.create && {
+                  create: purchaseHistoryCreateInput.item.create,
+                }),
+              }
+            : undefined,
+          vendor: purchaseHistoryCreateInput.vendor
+            ? {
+                ...(purchaseHistoryCreateInput.vendor.connect && {
+                  connect: purchaseHistoryCreateInput.vendor.connect,
+                }),
+                ...(purchaseHistoryCreateInput.vendor.create && {
+                  create: purchaseHistoryCreateInput.vendor.create,
+                }),
+              }
+            : undefined,
+        },
+        include: {
+          item: true,
+          vendor: true,
+        },
+      });
+
+      if (itemId && quantity > 0) {
+        await tx.item.update({
+          where: { itemId },
+          data: { quantity_in_stock: { increment: quantity } },
+        });
+      }
+
+      return purchase;
     });
   }
-
   async update(
     purchaseID: string,
     purchaseHistoryUpdateInput: PurchaseHistoryUpdateInput,

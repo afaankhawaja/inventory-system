@@ -186,6 +186,9 @@ type Transaction {
   transaction_date: DateTime
   to_location: String
   from_location: String
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   userId: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -334,6 +337,13 @@ type Item {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   locationId: String
   categoryId: String
   created_at: DateTime!
@@ -520,8 +530,8 @@ type Mutation {
   createVendor(vendorCreateInput: VendorCreateInput!): Vendor!
   updateVendor(vendorUpdateInput: VendorUpdateInput!, vendorID: String!): Vendor!
   removeVendor(vendorID: String!): Vendor!
-  checkOut(userId: String!, itemId: String!, quantity: Float!): Transaction!
-  checkIn(userId: String!, itemId: String!, quantity: Float!): Transaction!
+  checkOut(userId: String!, itemId: String!, quantity: Int!, purpose: String): Transaction!
+  checkIn(userId: String!, itemId: String!, quantity: Int!, purpose: String): Transaction!
   removeTransaction(transactionId: String!): Transaction!
   createMaintenanceSchedule(createMaintenanceScheduleInput: MaintenanceScheduleCreateInput!): MaintenanceSchedule!
   updateMaintenanceSchedule(maintenance_schedule_ID: String!, statusCheck: String!, updateMaintenanceScheduleInput: MaintenanceScheduleUpdateInput!): MaintenanceSchedule!
@@ -957,6 +967,13 @@ input ItemWhereInput {
   brand: StringNullableFilter
   image_path: StringNullableFilter
   barcode: StringNullableFilter
+  serial_number: StringNullableFilter
+  certificate_id: StringNullableFilter
+  weight_grams: DecimalNullableFilter
+  purity_karat: StringNullableFilter
+  appraised_value: DecimalNullableFilter
+  insured_policy_no: StringNullableFilter
+  metadata: JsonNullableFilter
   locationId: StringNullableFilter
   categoryId: StringNullableFilter
   created_at: DateTimeFilter
@@ -1259,6 +1276,9 @@ input TransactionWhereInput {
   transaction_date: DateTimeNullableFilter
   to_location: StringNullableFilter
   from_location: StringNullableFilter
+  purpose: StringNullableFilter
+  approved_by: StringNullableFilter
+  expected_return: DateTimeNullableFilter
   userId: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
@@ -1612,6 +1632,13 @@ input ItemCreateWithoutItemAlertsInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -1825,6 +1852,13 @@ input ItemCreateWithoutLocationInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   category: CategoryCreateNestedOneWithoutItemsInput
@@ -1891,6 +1925,13 @@ input ItemCreateWithoutCategoryInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -2001,6 +2042,13 @@ input ItemCreateWithoutFavoriteItemsInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -2112,6 +2160,13 @@ input ItemCreateWithoutMaintenanceSchedulesInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -2247,6 +2302,13 @@ input ItemCreateWithoutTemplateItemsInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -2356,6 +2418,13 @@ input ItemCreateWithoutReceiptItemsInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -2443,6 +2512,9 @@ input TransactionCreateWithoutUserInput {
   unit_price: Decimal
   status: String
   transaction_date: DateTime
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   created_at: DateTime
   updated_at: DateTime
   toLocationRef: LocationCreateNestedOneWithoutTransactionsToInput
@@ -2551,6 +2623,13 @@ input ItemCreateWithoutPurchaseHistoriesInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -2762,6 +2841,9 @@ input TransactionCreateWithoutToLocationRefInput {
   unit_price: Decimal
   status: String
   transaction_date: DateTime
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   created_at: DateTime
   updated_at: DateTime
   fromLocationRef: LocationCreateNestedOneWithoutTransactionsFromInput
@@ -2912,6 +2994,13 @@ input ItemCreateWithoutTransactionItemsInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -2932,6 +3021,7 @@ input ItemCreateOrConnectWithoutTransactionItemsInput {
 input ItemWhereUniqueInput {
   itemId: String
   barcode: String
+  serial_number: String
   AND: [ItemWhereInput!]
   OR: [ItemWhereInput!]
   NOT: [ItemWhereInput!]
@@ -2945,6 +3035,12 @@ input ItemWhereUniqueInput {
   is_high_value: BoolNullableFilter
   brand: StringNullableFilter
   image_path: StringNullableFilter
+  certificate_id: StringNullableFilter
+  weight_grams: DecimalNullableFilter
+  purity_karat: StringNullableFilter
+  appraised_value: DecimalNullableFilter
+  insured_policy_no: StringNullableFilter
+  metadata: JsonNullableFilter
   locationId: StringNullableFilter
   categoryId: StringNullableFilter
   created_at: DateTimeFilter
@@ -3007,6 +3103,9 @@ input TransactionWhereUniqueInput {
   transaction_date: DateTimeNullableFilter
   to_location: StringNullableFilter
   from_location: StringNullableFilter
+  purpose: StringNullableFilter
+  approved_by: StringNullableFilter
+  expected_return: DateTimeNullableFilter
   userId: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
@@ -3029,6 +3128,9 @@ input TransactionCreateManyToLocationRefInput {
   status: String
   transaction_date: DateTime
   from_location: String
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   userId: String
   created_at: DateTime
   updated_at: DateTime
@@ -3048,6 +3150,9 @@ input TransactionCreateWithoutFromLocationRefInput {
   unit_price: Decimal
   status: String
   transaction_date: DateTime
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   created_at: DateTime
   updated_at: DateTime
   toLocationRef: LocationCreateNestedOneWithoutTransactionsToInput
@@ -3073,6 +3178,9 @@ input TransactionCreateManyFromLocationRefInput {
   status: String
   transaction_date: DateTime
   to_location: String
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   userId: String
   created_at: DateTime
   updated_at: DateTime
@@ -3252,6 +3360,9 @@ input TransactionCreateWithoutTransactionItemsInput {
   unit_price: Decimal
   status: String
   transaction_date: DateTime
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   created_at: DateTime
   updated_at: DateTime
   toLocationRef: LocationCreateNestedOneWithoutTransactionsToInput
@@ -3409,6 +3520,9 @@ input TransactionCreateManyUserInput {
   transaction_date: DateTime
   to_location: String
   from_location: String
+  purpose: String
+  approved_by: String
+  expected_return: DateTime
   created_at: DateTime
   updated_at: DateTime
 }
@@ -3841,6 +3955,13 @@ input ItemCreateManyCategoryInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   locationId: String
   created_at: DateTime
   updated_at: DateTime
@@ -3932,6 +4053,13 @@ input ItemCreateManyLocationInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   categoryId: String
   created_at: DateTime
   updated_at: DateTime
@@ -4367,6 +4495,13 @@ input ItemUpdateWithoutItemAlertsInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -4711,6 +4846,13 @@ input ItemUpdateWithoutLocationInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   category: CategoryUpdateOneWithoutItemsNestedInput
@@ -4810,6 +4952,13 @@ input ItemUpdateWithoutCategoryInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -4979,6 +5128,13 @@ input ItemUpdateWithoutFavoriteItemsInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -5144,6 +5300,13 @@ input ItemUpdateWithoutMaintenanceSchedulesInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -5348,6 +5511,13 @@ input ItemUpdateWithoutTemplateItemsInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -5516,6 +5686,13 @@ input ItemUpdateWithoutReceiptItemsInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -5649,6 +5826,9 @@ input TransactionUpdateWithoutUserInput {
   unit_price: NullableDecimalFieldUpdateOperationsInput
   status: NullableStringFieldUpdateOperationsInput
   transaction_date: NullableDateTimeFieldUpdateOperationsInput
+  purpose: NullableStringFieldUpdateOperationsInput
+  approved_by: NullableStringFieldUpdateOperationsInput
+  expected_return: NullableDateTimeFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   toLocationRef: LocationUpdateOneWithoutTransactionsToNestedInput
@@ -5816,6 +5996,13 @@ input ItemUpdateWithoutPurchaseHistoriesInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -6132,6 +6319,9 @@ input TransactionUpdateWithoutToLocationRefInput {
   unit_price: NullableDecimalFieldUpdateOperationsInput
   status: NullableStringFieldUpdateOperationsInput
   transaction_date: NullableDateTimeFieldUpdateOperationsInput
+  purpose: NullableStringFieldUpdateOperationsInput
+  approved_by: NullableStringFieldUpdateOperationsInput
+  expected_return: NullableDateTimeFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   fromLocationRef: LocationUpdateOneWithoutTransactionsFromNestedInput
@@ -6272,6 +6462,13 @@ input ItemUpdateWithoutTransactionItemsInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput
@@ -6333,6 +6530,9 @@ input TransactionScalarWhereInput {
   transaction_date: DateTimeNullableFilter
   to_location: StringNullableFilter
   from_location: StringNullableFilter
+  purpose: StringNullableFilter
+  approved_by: StringNullableFilter
+  expected_return: DateTimeNullableFilter
   userId: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
@@ -6345,6 +6545,9 @@ input TransactionUpdateManyMutationInput {
   unit_price: NullableDecimalFieldUpdateOperationsInput
   status: NullableStringFieldUpdateOperationsInput
   transaction_date: NullableDateTimeFieldUpdateOperationsInput
+  purpose: NullableStringFieldUpdateOperationsInput
+  approved_by: NullableStringFieldUpdateOperationsInput
+  expected_return: NullableDateTimeFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
 }
@@ -6376,6 +6579,9 @@ input TransactionUpdateWithoutFromLocationRefInput {
   unit_price: NullableDecimalFieldUpdateOperationsInput
   status: NullableStringFieldUpdateOperationsInput
   transaction_date: NullableDateTimeFieldUpdateOperationsInput
+  purpose: NullableStringFieldUpdateOperationsInput
+  approved_by: NullableStringFieldUpdateOperationsInput
+  expected_return: NullableDateTimeFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   toLocationRef: LocationUpdateOneWithoutTransactionsToNestedInput
@@ -6569,6 +6775,9 @@ input TransactionUpdateWithoutTransactionItemsInput {
   unit_price: NullableDecimalFieldUpdateOperationsInput
   status: NullableStringFieldUpdateOperationsInput
   transaction_date: NullableDateTimeFieldUpdateOperationsInput
+  purpose: NullableStringFieldUpdateOperationsInput
+  approved_by: NullableStringFieldUpdateOperationsInput
+  expected_return: NullableDateTimeFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   toLocationRef: LocationUpdateOneWithoutTransactionsToNestedInput
@@ -7059,6 +7268,13 @@ input ItemScalarWhereInput {
   brand: StringNullableFilter
   image_path: StringNullableFilter
   barcode: StringNullableFilter
+  serial_number: StringNullableFilter
+  certificate_id: StringNullableFilter
+  weight_grams: DecimalNullableFilter
+  purity_karat: StringNullableFilter
+  appraised_value: DecimalNullableFilter
+  insured_policy_no: StringNullableFilter
+  metadata: JsonNullableFilter
   locationId: StringNullableFilter
   categoryId: StringNullableFilter
   created_at: DateTimeFilter
@@ -7078,6 +7294,13 @@ input ItemUpdateManyMutationInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
 }
@@ -7288,6 +7511,13 @@ input ItemCreateInput {
   brand: String
   image_path: String
   barcode: String
+  serial_number: String
+  certificate_id: String
+  weight_grams: Decimal
+  purity_karat: String
+  appraised_value: Decimal
+  insured_policy_no: String
+  metadata: JSON
   created_at: DateTime
   updated_at: DateTime
   location: LocationCreateNestedOneWithoutItemsInput
@@ -7314,6 +7544,13 @@ input ItemUpdateInput {
   brand: NullableStringFieldUpdateOperationsInput
   image_path: NullableStringFieldUpdateOperationsInput
   barcode: NullableStringFieldUpdateOperationsInput
+  serial_number: NullableStringFieldUpdateOperationsInput
+  certificate_id: NullableStringFieldUpdateOperationsInput
+  weight_grams: NullableDecimalFieldUpdateOperationsInput
+  purity_karat: NullableStringFieldUpdateOperationsInput
+  appraised_value: NullableDecimalFieldUpdateOperationsInput
+  insured_policy_no: NullableStringFieldUpdateOperationsInput
+  metadata: JSON
   created_at: DateTimeFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   location: LocationUpdateOneWithoutItemsNestedInput

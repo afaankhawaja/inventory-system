@@ -112,13 +112,16 @@ export class AlertService {
   }
 
   private async checkRestockAlerts() {
-    const items = await this.prisma.item.findMany({
+    const allItems = await this.prisma.item.findMany({
       where: {
-        quantity_in_stock: {
-          lte: this.prisma.item.fields.reorder_threshold,
-        },
+        quantity_in_stock: { not: null },
+        reorder_threshold: { not: null },
       },
     });
+
+    const items = allItems.filter(
+      (i) => (i.quantity_in_stock ?? 0) <= (i.reorder_threshold ?? 0),
+    );
 
     for (const item of items) {
       const existingAlert = await this.prisma.itemAlert.findFirst({

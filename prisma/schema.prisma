@@ -236,6 +236,13 @@ model Item {
   brand                 String?    
   image_path            String?           
   barcode               String?               @unique 
+  serial_number         String?               @unique
+  certificate_id        String?               
+  weight_grams          Decimal?              @db.Decimal
+  purity_karat          String?               
+  appraised_value       Decimal?              @db.Decimal
+  insured_policy_no     String?               
+  metadata              Json?                 
   locationId            String?               @map("locationID") 
   categoryId            String?               @map("categoryID")
   created_at             DateTime              @default(now())
@@ -461,6 +468,9 @@ model Transaction {
   transaction_date  DateTime? 
   to_location       String?   
   from_location     String?   
+  purpose           String?   
+  approved_by       String?   
+  expected_return   DateTime? 
   userId            String?   @map("userID")
   created_at         DateTime  @default(now())
   updated_at         DateTime  @updatedAt

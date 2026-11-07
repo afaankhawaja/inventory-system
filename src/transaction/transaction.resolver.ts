@@ -11,18 +11,30 @@ export class TransactionResolver {
   checkOut(
     @Args('userId') userId: string,
     @Args('itemId') itemId: string,
-    @Args('quantity') quantity: number,
+    @Args('quantity', { type: () => Int }) quantity: number,
+    @Args('purpose', { type: () => String, nullable: true }) purpose?: string,
   ) {
-    return this.transactionService.checkOutItem(userId, itemId, quantity);
+    return this.transactionService.checkOutItem(
+      userId,
+      itemId,
+      quantity,
+      purpose,
+    );
   }
 
   @Mutation(() => Transaction)
   checkIn(
     @Args('userId') userId: string,
     @Args('itemId') itemId: string,
-    @Args('quantity') quantity: number,
+    @Args('quantity', { type: () => Int }) quantity: number,
+    @Args('purpose', { type: () => String, nullable: true }) purpose?: string,
   ) {
-    return this.transactionService.checkInItem(userId, itemId, quantity);
+    return this.transactionService.checkInItem(
+      userId,
+      itemId,
+      quantity,
+      purpose,
+    );
   }
 
   @Mutation(() => Transaction)
