@@ -1,3 +1,5 @@
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
@@ -7,7 +9,7 @@ describe('UsersResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersResolver, UsersService],
+      providers: [{ provide: JwtService, useValue: {} }, { provide: PrismaService, useValue: {} }, UsersResolver, UsersService],
     }).compile();
 
     resolver = module.get<UsersResolver>(UsersResolver);

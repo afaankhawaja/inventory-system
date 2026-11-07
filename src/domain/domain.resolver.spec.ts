@@ -1,16 +1,17 @@
+import { PrismaService } from 'src/prisma/prisma.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { DomainResolver } from './domain.resolver';
-import { DomainService } from './domain.service';
+import { DomainsResolver } from './domain.resolver';
+import { DomainsService } from './domain.service';
 
-describe('DomainResolver', () => {
-  let resolver: DomainResolver;
+describe('DomainsResolver', () => {
+  let resolver: DomainsResolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DomainResolver, DomainService],
+      providers: [{ provide: PrismaService, useValue: {} }, DomainsResolver, DomainsService],
     }).compile();
 
-    resolver = module.get<DomainResolver>(DomainResolver);
+    resolver = module.get<DomainsResolver>(DomainsResolver);
   });
 
   it('should be defined', () => {

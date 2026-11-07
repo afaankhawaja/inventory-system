@@ -1,3 +1,4 @@
+import { PrismaService } from 'src/prisma/prisma.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PurchaseHistoryResolver } from './purchase-history.resolver';
 import { PurchaseHistoryService } from './purchase-history.service';
@@ -7,7 +8,7 @@ describe('PurchaseHistoryResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PurchaseHistoryResolver, PurchaseHistoryService],
+      providers: [{ provide: PrismaService, useValue: {} }, PurchaseHistoryResolver, PurchaseHistoryService],
     }).compile();
 
     resolver = module.get<PurchaseHistoryResolver>(PurchaseHistoryResolver);

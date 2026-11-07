@@ -1,3 +1,4 @@
+import { PrismaService } from 'src/prisma/prisma.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LocationsResolver } from './locations.resolver';
 import { LocationsService } from './locations.service';
@@ -7,7 +8,7 @@ describe('LocationsResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LocationsResolver, LocationsService],
+      providers: [{ provide: PrismaService, useValue: {} }, LocationsResolver, LocationsService],
     }).compile();
 
     resolver = module.get<LocationsResolver>(LocationsResolver);
