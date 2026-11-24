@@ -29,10 +29,11 @@ export class AuthService {
   ) {}
 
   private cookieOptions(maxAge: number) {
+    const isProd = process.env.NODE_ENV === 'production';
     return {
       httpOnly: true, // not readable from JS -> XSS cannot steal the token
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const, // blocks cross-site POSTs (CSRF)
+      secure: isProd,
+      sameSite: (isProd ? 'none' : 'lax') as 'none' | 'lax', // 'none' required for cross-domain cookies in prod
       path: '/',
       maxAge,
     };
