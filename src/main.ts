@@ -13,12 +13,23 @@ async function bootstrap() {
         .map((url) => url.trim().replace(/\/+$/, ''))
         .filter(Boolean)
     : [];
-  const allowedOrigins = Array.from(
-    new Set([...configuredOrigins, 'http://localhost:5173']),
-  );
+  const allowedOrigins = new Set([
+    ...configuredOrigins,
+    'http://localhost:5173',
+  ]);
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.has(origin) ||
+        /^https:\/\/[a-z0-9-]+\.netlify\.app$/i.test(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
   });
   const port = process.env.PORT ?? 3000;
